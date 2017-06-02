@@ -7,15 +7,15 @@ package administracion_de_memoria;
 public class ListaSegmentos
 {
 	private Segmento primero;
-    private Segmento ultimo;
+	private Segmento ultimo;
 	private Segmento actual;
-	private int nodos;
+	private int segmentos;
 	private final int memoriaTotal;
 	
 	public ListaSegmentos(int memoriaTotal)
 	{
 		//Crea el segmento vacío inicial
-		Segmento nodoInicial = new Segmento("H", 0, 1024);
+		Segmento nodoInicial = new Segmento("H", 0, memoriaTotal);
 		
 		this.primero = nodoInicial;
 		this.ultimo = nodoInicial;
@@ -23,9 +23,32 @@ public class ListaSegmentos
 		this.memoriaTotal = memoriaTotal;
 	}
 	
-	public void primerAjuste(String nombre, int direccion, int longitud)
+	/**
+	 * Asigna memoria a un proceso mediante el algoritmo de primer ajuste. Si no
+	 * se encuentra espacio suficiente, se rechaza la solicitud.
+	 * 
+	 * @param nombre  El nombre del proceso
+	 * @param longitud  La longitud en bytes que necesita el proceso
+	 * 
+	 * @return  La direccion en la que se agregó el proceso, o -1 en caso de que
+	 * la operación haya sido rechazada.
+	 */
+	public int primerAjuste(String nombre, int longitud)
 	{
+		// Busca el primer hueco adecuado para el proceso
+		Segmento hueco = this.primero;
+		boolean encontrado = false;
+		while (hueco != null && !encontrado)
+			if (hueco.getNombre().equals("H") && hueco.getLongitud() >= longitud)
+				encontrado = true;
+			else
+				hueco = hueco.getSiguiente();
 		
+		// Si no encontro un hueco con suficiente espacio se rechaza la operacion
+		if (hueco == null) return -1;
+		
+		sustituirHueco(hueco, nombre, longitud);
+		return hueco.getDireccion();
 	}
 	
 	public void siguienteAjuste(String nombre, int direccion, int longitud)
@@ -41,6 +64,44 @@ public class ListaSegmentos
 	public void peorAjuste(String nombre, int direccion, int longitud)
 	{
 		
+	}
+	
+	private void sustituirHueco(Segmento hueco, String nombre, int longitud)
+	{
+		// Crea el segmento para el proceso nuevo
+		Segmento segmentoProceso = new Segmento(nombre, hueco.getDireccion(), longitud);
+		segmentoProceso.setAnterior(hueco.getAnterior());
+		
+		Segmento referenciaAnterior;
+		// Si el proceso ocupa menos espacio que el hueco encontrado
+		if (longitud < hueco.getLongitud())
+		{	
+			segmentoProceso.setSiguiente(new Segmento("H",
+					hueco.getDireccion() + longitud,
+					hueco.getLongitud() - longitud,
+					segmentoProceso,
+					hueco.getSiguiente()));
+			
+			referenciaAnterior = segmentoProceso.getSiguiente();
+		}
+		
+		// Si el proceso tiene exactamente el tamaño del hueco
+		else
+		{
+			segmentoProceso.setSiguiente(hueco.getSiguiente());
+			referenciaAnterior = segmentoProceso;
+		}
+
+		// Actualiza las referencias en los nodos anterior y siguiente al hueco que se sustituye
+		if (hueco.getAnterior() != null)
+			hueco.getAnterior().setSiguiente(segmentoProceso);
+		else
+			this.primero = segmentoProceso;
+	
+		if (hueco.getSiguiente() != null)
+			hueco.getSiguiente().setAnterior(referenciaAnterior);
+		else
+			this.ultimo = referenciaAnterior;
 	}
 	
 	public int getMemoriaTotal()
@@ -75,21 +136,28 @@ class Segmento
 	private Segmento Anterior;
 	
 	/**
-	 * Construye un nodo para la lista de segmentos. Inicializa las referencias
-	 * anterior y siguiente con null.
+	 * Construye un nodo para la lista de segmentos.
 	 * @param nombre
 	 * @param direccion
 	 * @param longitud
+	 * @param anterior
+	 * @param siguiente
 	 */
-	public Segmento(String nombre, int direccion, int longitud)
+	public Segmento(String nombre, int direccion, int longitud, Segmento anterior,
+			Segmento siguiente)
 	{
 		this.Nombre = nombre;
 		this.Direccion = direccion;
 		this.Longitud = longitud;
-		this.Anterior = null;
-		this.Siguiente = null;
+		this.Anterior = anterior;
+		this.Siguiente = siguiente;
 	}
 	
+	public Segmento(String nombre, int direccion, int longitud)
+	{
+		this(nombre, direccion, longitud, null, null);
+	}
+
 	@Override
 	public String toString()
 	{
