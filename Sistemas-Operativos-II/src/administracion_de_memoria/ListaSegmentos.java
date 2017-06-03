@@ -35,8 +35,22 @@ public class ListaSegmentos
 	 */
 	public int primerAjuste(String nombre, int longitud)
 	{
-		// Busca el primer hueco adecuado para el proceso
-		Segmento hueco = this.primero;
+		if (nombre.equals("H")) return -1;
+
+		Segmento hueco = buscarHueco(this.primero, null, longitud);
+		
+		if (hueco == null) return -1;
+		
+		sustituirHueco(hueco, nombre, longitud);
+		
+		return hueco.getDireccion();
+	}
+	
+	public int siguienteAjuste(String nombre, int direccion, int longitud)
+	{
+		// Busca el primer hueco adecuado despues del actual para el proceso
+		Segmento actualCopia = this.actual;
+		Segmento hueco = this.actual;
 		boolean encontrado = false;
 		while (hueco != null && !encontrado)
 			if (hueco.getNombre().equals("H") && hueco.getLongitud() >= longitud)
@@ -44,16 +58,22 @@ public class ListaSegmentos
 			else
 				hueco = hueco.getSiguiente();
 		
+		if (hueco == null)
+		{
+			hueco = this.primero;
+			while (hueco != null && hueco != actualCopia && !encontrado)
+				if (hueco.getNombre().equals("H") && hueco.getLongitud() >= longitud)
+					encontrado = true;
+				else
+					hueco = hueco.getSiguiente();
+		}
+		
 		// Si no encontro un hueco con suficiente espacio se rechaza la operacion
 		if (hueco == null) return -1;
 		
 		sustituirHueco(hueco, nombre, longitud);
-		return hueco.getDireccion();
-	}
-	
-	public void siguienteAjuste(String nombre, int direccion, int longitud)
-	{
 		
+		return hueco.getDireccion();
 	}
 	
 	public void mejorAjuste(String nombre, int direccion, int longitud)
@@ -64,6 +84,13 @@ public class ListaSegmentos
 	public void peorAjuste(String nombre, int direccion, int longitud)
 	{
 		
+	}
+	
+	public int eliminarProceso(String nombre)
+	{
+		Segmento proceso = buscarProceso(nombre);
+		
+		return 0;
 	}
 	
 	private void sustituirHueco(Segmento hueco, String nombre, int longitud)
@@ -79,8 +106,7 @@ public class ListaSegmentos
 			segmentoProceso.setSiguiente(new Segmento("H",
 					hueco.getDireccion() + longitud,
 					hueco.getLongitud() - longitud,
-					segmentoProceso,
-					hueco.getSiguiente()));
+					segmentoProceso, hueco.getSiguiente()));
 			
 			referenciaAnterior = segmentoProceso.getSiguiente();
 		}
@@ -92,7 +118,7 @@ public class ListaSegmentos
 			referenciaAnterior = segmentoProceso;
 		}
 
-		// Actualiza las referencias en los nodos anterior y siguiente al hueco que se sustituye
+		// Actualiza las referencias en los nodos anterior y siguiente al hueco
 		if (hueco.getAnterior() != null)
 			hueco.getAnterior().setSiguiente(segmentoProceso);
 		else
@@ -102,6 +128,39 @@ public class ListaSegmentos
 			hueco.getSiguiente().setAnterior(referenciaAnterior);
 		else
 			this.ultimo = referenciaAnterior;
+	}
+	
+	private Segmento buscarProceso(String nombre)
+	{
+		if (nombre.equals("H")) return null;
+		
+		Segmento segmento = this.primero;
+		boolean encontrado = false;
+		while (segmento != null && !encontrado)
+			if (segmento.getNombre().equals(nombre))
+				encontrado = true;
+			else
+				segmento = segmento.getSiguiente();
+		
+		return segmento;
+	}
+	
+	private Segmento buscarHueco(Segmento inicio, Segmento final1, int longitud)
+	{
+		Segmento segmento = inicio;
+		boolean encontrado = false;
+		
+		try
+		{
+			while (segmento != final1 && !encontrado)
+				if (segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud)
+					encontrado = true;
+				else
+					segmento = segmento.getSiguiente();
+		}
+		catch (NullPointerException e) {}
+		
+		return segmento;
 	}
 	
 	public int getMemoriaTotal()
