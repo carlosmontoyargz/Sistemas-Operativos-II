@@ -148,15 +148,11 @@ public class ListaSegmentos
 	private Segmento buscarHueco(Segmento inicio, Segmento final1, int longitud)
 	{
 		Segmento segmento = inicio;
-		boolean encontrado = false;
-		
 		try
 		{
-			while (segmento != final1 && !encontrado)
-				if (segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud)
-					encontrado = true;
-				else
-					segmento = segmento.getSiguiente();
+			while (segmento != final1 &&
+					!(segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud))
+				segmento = segmento.getSiguiente();
 		}
 		catch (NullPointerException e) {}
 		
