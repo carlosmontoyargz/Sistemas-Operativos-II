@@ -28,7 +28,19 @@ public class AdministracionMemoria
 		lista.agregar("Prueba5", 273);
 		System.out.println(lista);
 		
+		lista.eliminar("Prueba2");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba5");
+		System.out.println(lista);
+		
 		lista.eliminar("Prueba3");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba4");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba1");
 		System.out.println(lista);
 	}
 }
