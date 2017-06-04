@@ -25,7 +25,7 @@ public class ListaPrimerAjuste extends ListaSegmentos
 	{
 		Segmento segmento = super.getPrimero();
 		while (segmento != null &&
-				!(segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud))
+				!(segmento.isHueco() && segmento.getLongitud() >= longitud))
 			segmento = segmento.getSiguiente();
 		
 		return segmento;
