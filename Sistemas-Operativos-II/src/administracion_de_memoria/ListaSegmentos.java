@@ -76,7 +76,13 @@ public class ListaSegmentos
 	{
 		Segmento proceso = buscarProceso(nombre);
 		
-		return 0;
+		if (proceso != null)
+		{
+			proceso.setNombre("H");
+			return proceso.getDireccion();
+		}
+		
+		return -1;
 	}
 	
 	private void sustituirHueco(Segmento hueco, String nombre, int longitud)
@@ -107,14 +113,11 @@ public class ListaSegmentos
 	
 	private Segmento buscarProceso(String nombre)
 	{
+		// Si se intenta buscar un hueco se retorna null
 		if (nombre.equals("H")) return null;
 		
 		Segmento segmento = this.primero;
-		boolean encontrado = false;
-		while (segmento != null && !encontrado)
-			if (segmento.getNombre().equals(nombre))
-				encontrado = true;
-			else
+		while (segmento != null && !(segmento.getNombre().equals(nombre)))
 				segmento = segmento.getSiguiente();
 		
 		return segmento;
