@@ -36,12 +36,14 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	protected abstract Segmento buscarHueco(int longitud);
 	
 	/**
-	 * Agrega un nuevo proceso a la lista de segmentos.
+	 * Agrega un nuevo proceso a la lista de segmentos. La operacion se cancela
+	 * si se intenta agregar un hueco.
 	 * 
 	 * @param nombre  El nombre del nuevo proceso
 	 * @param longitud  El tamano en bytes del nuevo proceso
 	 * 
-	 * @return  La direccion en la que fue agregado el proceso
+	 * @return  La direccion en la que fue agregado el proceso, o -1 si el proceso
+	 * no fue agregado.
 	 */
 	@Override
 	public int agregar(String nombre, int longitud)
@@ -55,29 +57,59 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	}
 	
 	/**
-	 * Elimina el proceso con el nombre especificado.
+	 * Elimina el proceso con el nombre especificado. La operacion se cancela si
+	 * se intenta eliminar un hueco.
 	 * 
-	 * @param nombre  El nombre del proceso
+	 * @param nombre  El nombre del proceso a eliminar
 	 * 
-	 * @return  La direccion del hueco generado, o -1 si ningun proceso fue eliminado
+	 * @return  La direccion del hueco generado, o -1 si ningun proceso fue
+	 * eliminado de la lista.
 	 */
 	@Override
 	public int eliminar(String nombre)
 	{	
-		// Si se intenta buscar un hueco se retorna null
+		// Si se intenta eliminar un hueco se retorna null
 		if (nombre.equals("H")) return -1;
 		
+		// Busca el proceso en la lista
 		Segmento proceso = this.primero;
 		while (proceso != null && !(proceso.getNombre().equals(nombre)))
 				proceso = proceso.getSiguiente();
 		
-		if (proceso != null)
+		if (proceso == null) return -1;
+		
+		proceso.setNombre("H");
+		
+		// Fusiona los huecos contiguos
+		Segmento anterior = proceso.getAnterior();
+		Segmento siguiente = proceso.getSiguiente();		
+		if (anterior != null && anterior.getNombre().equals("H"))
 		{
-			proceso.setNombre("H");
-			return proceso.getDireccion();
+			proceso.setDireccion(anterior.getDireccion());
+			proceso.setLongitud(proceso.getLongitud() + anterior.getLongitud());
+			proceso.setAnterior(anterior.getAnterior());
+			
+			anterior = proceso.getAnterior();
+			
+			if (anterior != null)
+				anterior.setSiguiente(proceso);
+			else
+				this.primero = proceso;
+		}
+		if (siguiente != null && siguiente.getNombre().equals("H"))
+		{
+			proceso.setLongitud(proceso.getLongitud() + siguiente.getLongitud());
+			proceso.setSiguiente(siguiente.getSiguiente());
+			
+			siguiente = proceso.getSiguiente();
+			
+			if (siguiente != null)
+				siguiente.setAnterior(proceso);
+			else
+				this.ultimo = proceso;
 		}
 		
-		return -1;
+		return proceso.getDireccion();
 	}
 	
 	private void sustituirHueco(Segmento hueco, String nombre, int longitud)
@@ -96,13 +128,13 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 					hueco, hueco.getSiguiente());
 			
 			hueco.setLongitud(longitud);
+			hueco.setSiguiente(nuevoHueco);
 			
-			Segmento siguiente;
-			if ((siguiente = hueco.getSiguiente()) != null)
+			Segmento siguiente = nuevoHueco.getSiguiente();
+			if (siguiente != null)
 				siguiente.setAnterior(nuevoHueco);
 			else
 				this.ultimo = nuevoHueco;
-			hueco.setSiguiente(nuevoHueco);
 		}
 	}
 	
