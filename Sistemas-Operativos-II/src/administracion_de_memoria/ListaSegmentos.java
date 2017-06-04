@@ -54,10 +54,10 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		// Si se intenta agregar un hueco la operacion se cancela
 		if (Segmento.isNombreHueco(nombre)) return -1;
 		
-		//Se busca el hueco adecuado para el proceso
+		// Se busca el hueco adecuado para el proceso
 		Segmento hueco = buscarHueco(longitud);
 		
-		//Si no se encuentra un hueco adecuado o el segmento no es un hueco la operacion se cancela
+		// Si no se encuentra un hueco adecuado o el segmento no es un hueco la operacion se cancela
 		if (hueco == null) return -1; 
 		if (!hueco.isHueco()) return -1;
 		
