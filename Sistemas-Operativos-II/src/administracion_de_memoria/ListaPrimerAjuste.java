@@ -13,13 +13,6 @@ public class ListaPrimerAjuste extends ListaSegmentos
 		super(memoriaTotal);
 	}
 
-	/**
-	 * Busca el primer hueco en la lista que sea adecuado para el proceso por agregar.
-	 * 
-	 * @param longitud  La longitud en bytes del proceso por agregar
-	 * 
-	 * @return  El segmento encontrado para el proceso
-	 */
 	@Override
 	protected Segmento buscarHueco(int longitud)
 	{
