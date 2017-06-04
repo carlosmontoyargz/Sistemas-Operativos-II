@@ -57,8 +57,8 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	}
 	
 	/**
-	 * Elimina el proceso con el nombre especificado. La operacion se cancela si
-	 * se intenta eliminar un hueco.
+	 * Elimina el proceso con el nombre especificado. Fusiona los huecos adyacentes.
+	 * La operacion se cancela si se intenta eliminar un hueco.
 	 * 
 	 * @param nombre  El nombre del proceso a eliminar
 	 * 
@@ -67,7 +67,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 */
 	@Override
 	public int eliminar(String nombre)
-	{	
+	{
 		// Si se intenta eliminar un hueco se retorna null
 		if (nombre.equals("H")) return -1;
 		
