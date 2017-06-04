@@ -1,6 +1,8 @@
 package administracion_de_memoria;
 
 /**
+ * Clase que representa un nodo en una lista doblemente ligada de segmentos de
+ * memoria.
  *
  * @author carlosmontoya
  */
@@ -36,60 +38,30 @@ public class Segmento
 	{
 		this(nombre, direccion, longitud, null, null);
 	}
-
+	
+	public void setNombre(String Nombre) { this.Nombre = Nombre; }
+	
+	public void setDireccion(int Direccion) { this.Direccion = Direccion; }
+	
+	public void setLongitud(int Longitud) { this.Longitud = Longitud; }
+	
+	public void setAnterior(Segmento anterior) { this.Anterior = anterior; }
+	
+	public void setSiguiente(Segmento siguiente) { this.Siguiente = siguiente; }
+	
+	public String getNombre() { return Nombre; }
+	
+	public int getDireccion() { return Direccion; }
+	
+	public int getLongitud() { return Longitud; }
+	
+	public Segmento getAnterior() { return this.Anterior; }
+	
+	public Segmento getSiguiente() { return this.Siguiente; }
+	
 	@Override
 	public String toString()
 	{
 		return "[" + this.Nombre + ", " + this.Direccion + ", " + this.Longitud + "]";
-	}
-	
-	public void setNombre(String Nombre)
-	{
-		this.Nombre = Nombre;
-	}
-
-	public void setDireccion(int Direccion)
-	{
-		this.Direccion = Direccion;
-	}
-
-	public void setLongitud(int Longitud)
-	{
-		this.Longitud = Longitud;
-	}
-	
-	public void setAnterior(Segmento anterior)
-	{
-		this.Anterior = anterior;
-	}
-	
-	public void setSiguiente(Segmento siguiente)
-	{
-		this.Siguiente = siguiente;
-	}
-	
-	public Segmento getAnterior()
-	{
-		return this.Anterior;
-	}
-	
-	public String getNombre()
-	{
-		return Nombre;
-	}
-
-	public int getDireccion()
-	{
-		return Direccion;
-	}
-
-	public int getLongitud()
-	{
-		return Longitud;
-	}
-		
-	public Segmento getSiguiente()
-	{
-		return this.Siguiente;
 	}
 }
