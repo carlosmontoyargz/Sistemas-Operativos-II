@@ -15,14 +15,16 @@ public class Segmento
 	private Segmento Siguiente;
 	private Segmento Anterior;
 	
+	public static final String nombreHueco = "H";
+	
 	/**
 	 * Construye un nodo para la lista de segmentos.
 	 * 
-	 * @param nombre
-	 * @param direccion
-	 * @param longitud
-	 * @param anterior
-	 * @param siguiente
+	 * @param nombre  El nombre del segmento
+	 * @param direccion  La direccion en memoria del segmento
+	 * @param longitud  La longitud en bytes del segmento
+	 * @param anterior  El segmento anterior en la lista
+	 * @param siguiente  El segmento siguiente en la lista
 	 */
 	public Segmento(String nombre, int direccion, int longitud, Segmento anterior,
 			Segmento siguiente)
@@ -34,9 +36,37 @@ public class Segmento
 		this.Siguiente = siguiente;
 	}
 	
+	/**
+	 * Construye un hueco para la lista de segmentos.
+	 * 
+	 * @param direccion  La direccion en memoria del hueco
+	 * @param longitud  La longitud en bytes del hueco
+	 * @param anterior  El segmento anterior en la lista
+	 * @param siguiente  El segmento siguiente en la lista
+	 */
+	public Segmento(int direccion, int longitud, Segmento anterior, Segmento siguiente)
+	{
+		this(Segmento.nombreHueco, direccion, longitud, anterior, siguiente);
+	}
+	
 	public Segmento(String nombre, int direccion, int longitud)
 	{
 		this(nombre, direccion, longitud, null, null);
+	}
+	
+	/**
+	 * Comprueba si el segmento es un hueco.
+	 * 
+	 * @return  true si el segmento es un hueco, false en caso contrario
+	 */
+	public boolean isHueco()
+	{
+		return this.Nombre.equals(Segmento.nombreHueco);
+	}
+	
+	public static boolean isNombreHueco(String nombre)
+	{
+		return nombreHueco.equals(nombre);
 	}
 	
 	public void setNombre(String Nombre) { this.Nombre = Nombre; }
