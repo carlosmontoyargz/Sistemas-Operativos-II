@@ -1,7 +1,7 @@
 package administracion_de_memoria;
 
 /**
- * Clase abstracta que permite implemntar un administrador de memoria mediante
+ * Clase abstracta que permite implementar un administrador de memoria mediante
  * una lista doblemente ligada.
  *
  * @author carlosmontoya
