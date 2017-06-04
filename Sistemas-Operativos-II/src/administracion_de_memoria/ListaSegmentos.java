@@ -41,7 +41,7 @@ public class ListaSegmentos
 	public int primerAjuste(String nombre, int longitud)
 	{
 		if (nombre.equals("H")) return -1;
-		Segmento hueco = buscarHueco(this.primero, null, longitud);
+		Segmento hueco = buscarHueco(longitud);
 		if (hueco == null) return -1;
 		sustituirHueco(hueco, nombre, longitud);
 		
@@ -52,23 +52,7 @@ public class ListaSegmentos
 	{
 		// Busca el primer hueco adecuado despues del actual para el proceso
 		Segmento actualCopia = this.actual;
-		Segmento hueco = this.actual;
-		boolean encontrado = false;
-		while (hueco != null && !encontrado)
-			if (hueco.getNombre().equals("H") && hueco.getLongitud() >= longitud)
-				encontrado = true;
-			else
-				hueco = hueco.getSiguiente();
-		
-		if (hueco == null)
-		{
-			hueco = this.primero;
-			while (hueco != null && hueco != actualCopia && !encontrado)
-				if (hueco.getNombre().equals("H") && hueco.getLongitud() >= longitud)
-					encontrado = true;
-				else
-					hueco = hueco.getSiguiente();
-		}
+		Segmento hueco = null;
 		
 		// Si no encontro un hueco con suficiente espacio se rechaza la operacion
 		if (hueco == null) return -1;
@@ -138,16 +122,20 @@ public class ListaSegmentos
 	
 	private Segmento buscarHueco(Segmento inicio, Segmento final1, int longitud)
 	{
+		if (inicio == null) inicio = this.primero;
+		if (final1 == null) final1 = this.ultimo;
+		
 		Segmento segmento = inicio;
-		try
-		{
-			while (segmento != final1 &&
-					!(segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud))
-				segmento = segmento.getSiguiente();
-		}
-		catch (NullPointerException e) {}
+		while (segmento != final1 &&
+				!(segmento.getNombre().equals("H") && segmento.getLongitud() >= longitud))
+			segmento = segmento.getSiguiente();
 		
 		return segmento;
+	}
+	
+	private Segmento buscarHueco(int longitud)
+	{
+		return buscarHueco(null, null, longitud);
 	}
 	
 	public int getMemoriaTotal()
