@@ -34,27 +34,26 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @param nombre  El nombre del nuevo proceso
 	 * @param longitud  El tamano en bytes del nuevo proceso
 	 * 
-	 * @return  La direccion en la que fue agregado el proceso, o -1 si el proceso
-	 * no fue agregado.
+	 * @return  true si el proceso fue agregado correctamente, o false en caso contrario
 	 */
 	@Override
-	public int agregar(String nombre, int longitud)
+	public boolean agregar(String nombre, int longitud)
 	{
 		// Si se intenta agregar un hueco o un proceso con longitud no positiva
 		// la operacion se cancela
-		if (Segmento.isNombreHueco(nombre) || longitud < 1) return -1;
+		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
 		
 		// Se busca el hueco adecuado para el proceso
 		Segmento hueco = buscarHueco(longitud);
 		
 		// Si no se encuentra un hueco adecuado o el segmento no es un hueco la operacion se cancela
-		if (hueco == null) return -1; 
-		if (!hueco.isHueco()) return -1;
+		if (hueco == null) return false; 
+		if (!hueco.isHueco()) return false;
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
 		
-		return hueco.getDireccion();
+		return true;
 	}
 	
 	/**
@@ -68,28 +67,49 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 */
 	protected abstract Segmento buscarHueco(int longitud);
 	
+	private void guardarProceso(Segmento hueco, String nombre, int longitud)
+	{
+		hueco.setNombre(nombre);
+		
+		// Si el hueco es mas grande que el proceso
+		if (hueco.getLongitud() > longitud)
+		{
+			Segmento nuevoHueco = new Segmento(
+					hueco.getDireccion() + longitud,
+					hueco.getLongitud() - longitud,
+					hueco, hueco.getSiguiente());
+			
+			hueco.setLongitud(longitud);
+			hueco.setSiguiente(nuevoHueco);
+			
+			Segmento siguiente = nuevoHueco.getSiguiente();
+			if (siguiente != null)
+				siguiente.setAnterior(nuevoHueco);
+			else
+				this.ultimo = nuevoHueco;
+		}
+	}
+	
 	/**
 	 * Elimina el proceso con el nombre especificado.
 	 * 
 	 * @param nombre  El nombre del proceso a eliminar
 	 * 
-	 * @return  El segmento generado despues de eliminar el proceso encontrado, o
-	 * null en caso de que no se haya eliminado ningun proceso.
+	 * @return  true si el proceso fue eliminado correctamente, o false si no se
+	 * ha eliminado nada en la lista
 	 */
 	@Override
-	public int eliminar(String nombre)
+	public boolean eliminar(String nombre)
 	{
-		Segmento proceso = buscarProceso(nombre);
-		int dir = eliminarProceso(proceso)? proceso.getDireccion(): -1;
-		
-		return dir;
+		return convertirHueco(buscarProceso(nombre));
 	}
 	
 	/**
 	 * Busca en la lista el proceso con el nombre especificado.
 	 * 
 	 * @param nombre  El nombre del proceso a buscar
-	 * @return 
+	 * 
+	 * @return  La referencia al proceso buscado, o null en caso de no ser encontrado
 	 */
 	protected Segmento buscarProceso(String nombre)
 	{
@@ -109,9 +129,10 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @param proceso  El proceso a ser convertido en hueco
 	 * 
-	 * @return  true si el proceso fue eliminado, false en caso contrario
+	 * @return  true si el proceso fue convertido en hueco, false si el argumento
+	 * es null
 	 */
-	protected boolean eliminarProceso(Segmento proceso)
+	protected boolean convertirHueco(Segmento proceso)
 	{
 		if (proceso == null) return false;
 		
@@ -147,29 +168,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		}
 		
 		return true;
-	}
-	
-	private void guardarProceso(Segmento hueco, String nombre, int longitud)
-	{
-		hueco.setNombre(nombre);
-		
-		// Si el hueco es mas grande que el proceso
-		if (hueco.getLongitud() > longitud)
-		{
-			Segmento nuevoHueco = new Segmento(
-					hueco.getDireccion() + longitud,
-					hueco.getLongitud() - longitud,
-					hueco, hueco.getSiguiente());
-			
-			hueco.setLongitud(longitud);
-			hueco.setSiguiente(nuevoHueco);
-			
-			Segmento siguiente = nuevoHueco.getSiguiente();
-			if (siguiente != null)
-				siguiente.setAnterior(nuevoHueco);
-			else
-				this.ultimo = nuevoHueco;
-		}
 	}
 	
 	public int getMemoriaTotal() { return memoriaTotal; }
