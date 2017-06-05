@@ -67,6 +67,38 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 */
 	protected abstract Segmento buscarHueco(int longitud);
 	
+	/**
+	 * Busca el primer hueco en la lista con la longitud en bytes necesaria para el
+	 * proceso. Retorna null si no se ha encontrado un hueco adecuado en el rango
+	 * especificado.
+	 * 
+	 * @param longitud  La longitud en bytes del proceso
+	 * @param inicio  El segmento en el que se comienza a buscar. Si es null se
+	 * realiza la busqueda desde el segmento inicial.
+	 * @param final1  El segmento en el que se termina de buscar. Este segmeno no
+	 * es considerado en la busqueda.
+	 * 
+	 * @return  El hueco encontrado, o null si no se ha encontrado un hueco adecuado
+	 */
+	protected Segmento buscarHueco(int longitud, Segmento inicio, Segmento final1)
+	{
+		if (inicio == null) inicio = this.primero;
+		
+		boolean encontrado = false;
+		Segmento segmento = inicio;
+		while (segmento != final1 && !encontrado)
+		{
+			if (segmento.isHueco() && segmento.getLongitud() >= longitud)
+				encontrado = true;
+			else
+				segmento = segmento.getSiguiente();
+		}
+		
+		if (segmento == final1 && !encontrado) segmento = null;
+		
+		return segmento;
+	}
+	
 	private void guardarProceso(Segmento hueco, String nombre, int longitud)
 	{
 		hueco.setNombre(nombre);
