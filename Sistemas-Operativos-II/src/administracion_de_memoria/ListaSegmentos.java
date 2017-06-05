@@ -101,7 +101,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public boolean eliminar(String nombre)
 	{
-		return convertirHueco(buscarProceso(nombre));
+		return liberarMemoria(buscarProceso(nombre));
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @return  true si el proceso fue convertido en hueco, false si el argumento
 	 * es null
 	 */
-	protected boolean convertirHueco(Segmento proceso)
+	protected boolean liberarMemoria(Segmento proceso)
 	{
 		if (proceso == null) return false;
 		
