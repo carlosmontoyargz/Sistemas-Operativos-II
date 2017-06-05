@@ -40,8 +40,9 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public int agregar(String nombre, int longitud)
 	{
-		// Si se intenta agregar un hueco la operacion se cancela
-		if (Segmento.isNombreHueco(nombre)) return -1;
+		// Si se intenta agregar un hueco o un proceso con longitud no positiva
+		// la operacion se cancela
+		if (Segmento.isNombreHueco(nombre) || longitud < 1) return -1;
 		
 		// Se busca el hueco adecuado para el proceso
 		Segmento hueco = buscarHueco(longitud);
