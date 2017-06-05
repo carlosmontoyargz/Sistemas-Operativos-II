@@ -16,11 +16,6 @@ public class ListaPrimerAjuste extends ListaSegmentos
 	@Override
 	protected Segmento buscarHueco(int longitud)
 	{
-		Segmento segmento = super.getPrimero();
-		while (segmento != null &&
-				!(segmento.isHueco() && segmento.getLongitud() >= longitud))
-			segmento = segmento.getSiguiente();
-		
-		return segmento;
+		return super.buscarHueco(longitud, null, null);
 	}    
 }
