@@ -26,6 +26,10 @@ public class AdministracionMemoria
 		System.out.println("-------------------------------- Mejor ajuste --------------------------------");
 		pruebas(new ListaMejorAjuste(1024));
 		System.out.println();
+		
+		System.out.println("-------------------------------- Peor ajuste --------------------------------");
+		pruebas(new ListaPeorAjuste(1024));
+		System.out.println();
 	}
 	
 	public void pruebas(AdministradorMemoria adm)
