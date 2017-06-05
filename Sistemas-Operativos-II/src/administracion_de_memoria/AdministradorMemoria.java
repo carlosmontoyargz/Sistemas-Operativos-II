@@ -6,7 +6,7 @@ package administracion_de_memoria;
  */
 public interface AdministradorMemoria
 {
-	public int agregar(String nombre, int longitud);
+	public boolean agregar(String nombre, int longitud);
 	
-	public int eliminar(String nombre);
+	public boolean eliminar(String nombre);
 }
