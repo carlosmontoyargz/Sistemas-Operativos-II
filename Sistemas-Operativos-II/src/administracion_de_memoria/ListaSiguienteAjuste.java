@@ -1,6 +1,11 @@
 package administracion_de_memoria;
 
-
+/**
+ * Clase que permite administrar una lista de segmentos de memoria mediante el
+ * algoritmo de siguiente ajuste.
+ * 
+ * @author carlosmontoya
+ */
 public class ListaSiguienteAjuste extends ListaSegmentos
 {
 	private Segmento actual;
@@ -85,7 +90,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 				&& (actual == proceso.getAnterior() || actual == proceso.getSiguiente()))
 			actual = proceso;
 		
-		return super.convertirHueco(proceso);
+		return super.liberarMemoria(proceso);
 	}
 	
 	@Override
