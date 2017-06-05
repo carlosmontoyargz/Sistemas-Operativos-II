@@ -11,21 +11,30 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 		this.actual = super.getPrimero();
 	}
 	
+	/**
+	 * Agrega un nuevo proceso a la lista mediante el algoritmo de siguiente ajuste.
+	 * 
+	 * @param nombre  El nombre del proceso por agregar
+	 * @param longitud  La longitud en bytes del proceso por agregar
+	 * 
+	 * @return  true si el proceso fue agregado correctamente, o false en caso
+	 * contrario
+	 */
 	@Override
-	public int agregar(String nombre, int longitud)
+	public boolean agregar(String nombre, int longitud)
 	{
-		int dir = super.agregar(nombre, longitud);
+		boolean agregado = super.agregar(nombre, longitud);
+		if (agregado)
+			actual = (actual.getSiguiente() != null)? actual.getSiguiente()
+					: super.getPrimero();
 		
-		actual = (actual.getSiguiente() != null)? actual.getSiguiente() : super.getPrimero();
-		
-		return dir;
+		return agregado;
 	}
 
 	@Override
 	protected Segmento buscarHueco(int longitud)
 	{
 		Segmento segmento = buscarHueco(longitud, 0);
-		
 		if (segmento == null)
 		{
 			segmento = buscarHueco(longitud, 1);
@@ -37,23 +46,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 		
 		return segmento;
 	}
-	
-	@Override
-	public int eliminar(String nombre)
-	{
-		Segmento proceso = super.buscarProceso(nombre);
 		
-		if (actual.isHueco()
-				&& (actual == proceso.getAnterior() || actual == proceso.getSiguiente()))
-			actual = proceso;
-		
-		actual = true ? actual : null;
-		
-		int dir = eliminarProceso(proceso)? proceso.getDireccion(): -1;
-		
-		return dir;
-	}
-	
 	private Segmento buscarHueco(int longitud, int tipoBusqueda)
 	{
 		Segmento segmento, final1;
@@ -73,6 +66,26 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 			segmento = segmento.getSiguiente();
 		
 		return segmento;
+	}
+	
+	/**
+	 * Elimina el proceso con el nombre especificado.
+	 * 
+	 * @param nombre  El nombre del proceso a eliminar
+	 * 
+	 * @return  true si el proceso fue eliminado correctamente, o false si no se
+	 * ha eliminado nada en la lista
+	 */
+	@Override
+	public boolean eliminar(String nombre)
+	{
+		Segmento proceso = super.buscarProceso(nombre);
+		
+		if (proceso != null && actual.isHueco()
+				&& (actual == proceso.getAnterior() || actual == proceso.getSiguiente()))
+			actual = proceso;
+		
+		return super.convertirHueco(proceso);
 	}
 	
 	@Override
