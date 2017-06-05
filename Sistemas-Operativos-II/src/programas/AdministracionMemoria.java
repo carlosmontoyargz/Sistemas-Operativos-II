@@ -10,14 +10,17 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		AdministracionMemoria obj = new AdministracionMemoria();
-		
+		new AdministracionMemoria().pruebas();
+	}
+	
+	public void pruebas()
+	{
 		System.out.println("-------------------------------- Primer ajuste --------------------------------");
-		obj.pruebas(new ListaPrimerAjuste(1024));
+		pruebas(new ListaPrimerAjuste(1024));
 		System.out.println();
 		
 		System.out.println("-------------------------------- Segundo ajuste --------------------------------");
-		obj.pruebas(new ListaSiguienteAjuste(1024));
+		pruebas(new ListaSiguienteAjuste(1024));
 	}
 	
 	public void pruebas(AdministradorMemoria adm)
