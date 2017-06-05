@@ -19,7 +19,7 @@ public class AdministracionMemoria
 		pruebas(new ListaPrimerAjuste(1024));
 		System.out.println();
 		
-		System.out.println("-------------------------------- Segundo ajuste --------------------------------");
+		System.out.println("-------------------------------- Siguiente ajuste --------------------------------");
 		pruebas(new ListaSiguienteAjuste(1024));
 	}
 	
@@ -27,46 +27,49 @@ public class AdministracionMemoria
 	{
 		System.out.println(adm);
 		
-		adm.agregar("Prueba1", 100);
+		adm.agregar("P1", 100);
 		System.out.println(adm);
 		
-		adm.agregar("Prueba2", 200);
+		adm.agregar("P2", 200);
 		System.out.println(adm);
 		
-		adm.agregar("Prueba3", 250);
+		adm.agregar("P3", 250);
 		System.out.println(adm);
 		
-		adm.agregar("Prueba4", 200);
+		adm.agregar("P4", 200);
 		System.out.println(adm);
 		
-		adm.agregar("Prueba5", 273);
+		adm.agregar("P5", 273);
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba2");
+		adm.eliminar("P2");
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba5");
+		adm.eliminar("P5");
 		System.out.println(adm);
 		
-		adm.agregar("Prueba6", 150);
+		adm.agregar("P6", 150);
 		System.out.println(adm);
 		
-		adm.agregar("Prueba7", 160);
+		adm.agregar("P7", 110);
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba3");
+		adm.agregar("P8", 250);
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba4");
+		adm.eliminar("P3");
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba1");
+		adm.eliminar("P4");
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba7");
+		adm.eliminar("P1");
 		System.out.println(adm);
 		
-		adm.eliminar("Prueba6");
+		adm.eliminar("P7");
+		System.out.println(adm);
+		
+		adm.eliminar("P6");
 		System.out.println(adm);
 	}
 }
