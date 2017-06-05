@@ -10,6 +10,16 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 		super(memoriaTotal);
 		this.actual = super.getPrimero();
 	}
+	
+	@Override
+	public int agregar(String nombre, int longitud)
+	{
+		int dir = super.agregar(nombre, longitud);
+		
+		actual = (actual.getSiguiente() != null)? actual.getSiguiente() : super.getPrimero();
+		
+		return dir;
+	}
 
 	@Override
 	protected Segmento buscarHueco(int longitud)
@@ -20,8 +30,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 		{
 			segmento = buscarHueco(longitud, 1);
 			
-			if (segmento == this.actual)
-				return null;
+			if (segmento == this.actual) return null;
 		}
 		
 		this.actual = segmento;
@@ -69,6 +78,57 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 	@Override
 	public String toString()
 	{
-		return super.toString() + " " + this.actual;
+		return super.toString() + " : " + this.actual;
+	}
+}
+
+class ListaSiguienteAjusteTest
+{
+	public static void main(String[] args)
+	{
+		ListaSegmentos lista = new ListaSiguienteAjuste(1024);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba1", 100);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba2", 200);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba3", 250);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba4", 200);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba5", 273);
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba2");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba5");
+		System.out.println(lista);
+		
+		lista.agregar("Prueba6", 150);
+		System.out.println(lista);
+		
+		lista.agregar("Prueba7", 160);
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba3");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba4");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba1");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba7");
+		System.out.println(lista);
+		
+		lista.eliminar("Prueba6");
+		System.out.println(lista);
 	}
 }
