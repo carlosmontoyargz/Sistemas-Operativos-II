@@ -10,7 +10,7 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		ListaSegmentos lista = new ListaPrimerAjuste(1024);
+		ListaSegmentos lista = new ListaSiguienteAjuste(1024);
 		System.out.println(lista);
 		
 		lista.agregar("Prueba1", 100);
