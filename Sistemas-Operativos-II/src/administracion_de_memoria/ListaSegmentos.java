@@ -28,17 +28,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	}
 	
 	/**
-	 * Busca el hueco en el que se almacenara el proceso nuevo. Si no se encuentra
-	 * un hueco adecuado, el proceso debe retornar null. El segmento retornado debe
-	 * ser un hueco.
-	 * 
-	 * @param longitud  El tamano en bytes del nuevo proceso
-	 * 
-	 * @return  El hueco adecuado en el que guardar el proceso nuevo
-	 */
-	protected abstract Segmento buscarHueco(int longitud);
-	
-	/**
 	 * Agrega un nuevo proceso a la lista de segmentos. La operacion se cancela
 	 * si se intenta agregar un hueco.
 	 * 
@@ -68,26 +57,62 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	}
 	
 	/**
-	 * Elimina el proceso con el nombre especificado. Fusiona los huecos adyacentes.
-	 * La operacion se cancela si se intenta eliminar un hueco.
+	 * Busca el hueco en el que se almacenara el proceso nuevo. Si no se encuentra
+	 * un hueco adecuado, el proceso debe retornar null. El segmento retornado debe
+	 * ser un hueco.
+	 * 
+	 * @param longitud  El tamano en bytes del nuevo proceso
+	 * 
+	 * @return  El hueco adecuado en el que guardar el proceso nuevo
+	 */
+	protected abstract Segmento buscarHueco(int longitud);
+	
+	/**
+	 * Elimina el proceso con el nombre especificado.
 	 * 
 	 * @param nombre  El nombre del proceso a eliminar
 	 * 
-	 * @return  La direccion del hueco generado, o -1 si ningun proceso fue
-	 * eliminado de la lista.
+	 * @return  El segmento generado despues de eliminar el proceso encontrado, o
+	 * null en caso de que no se haya eliminado ningun proceso.
 	 */
 	@Override
 	public int eliminar(String nombre)
 	{
-		// Si se intenta eliminar un hueco la operacion se cancela
-		if (Segmento.isNombreHueco(nombre)) return -1;
+		Segmento proceso = buscarProceso(nombre);
+		int dir = eliminarProceso(proceso)? proceso.getDireccion(): -1;
+		
+		return dir;
+	}
+	
+	/**
+	 * Busca en la lista el proceso con el nombre especificado.
+	 * 
+	 * @param nombre  El nombre del proceso a buscar
+	 * @return 
+	 */
+	protected Segmento buscarProceso(String nombre)
+	{
+		// Si se intenta buscar un hueco la operacion se cancela
+		if (Segmento.isNombreHueco(nombre)) return null;
 		
 		// Busca el proceso en la lista
 		Segmento proceso = this.primero;
 		while (proceso != null && !(proceso.getNombre().equals(nombre)))
 				proceso = proceso.getSiguiente();
 		
-		if (proceso == null) return -1;
+		return proceso;
+	}
+	
+	/**
+	 * Convierte en hueco el proceso especificado y fusiona los huecos adyacentes.
+	 * 
+	 * @param proceso  El proceso a ser convertido en hueco
+	 * 
+	 * @return  true si el proceso fue eliminado, false en caso contrario
+	 */
+	protected boolean eliminarProceso(Segmento proceso)
+	{
+		if (proceso == null) return false;
 		
 		proceso.setNombre(Segmento.nombreHueco);
 		
@@ -120,7 +145,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 				this.ultimo = proceso;
 		}
 		
-		return proceso.getDireccion();
+		return true;
 	}
 	
 	private void guardarProceso(Segmento hueco, String nombre, int longitud)
