@@ -26,7 +26,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 	 * contrario
 	 */
 	@Override
-	public boolean agregar(String nombre, int longitud)
+	public synchronized boolean agregar(String nombre, int longitud)
 	{
 		boolean agregado = super.agregar(nombre, longitud);
 		if (agregado)
@@ -37,7 +37,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 	}
 	
 	@Override
-	protected Segmento buscarHueco(int longitud)
+	protected synchronized Segmento buscarHueco(int longitud)
 	{
 		Segmento segmento = super.buscarHueco(longitud, actual, null);
 		if (segmento == null)
@@ -57,7 +57,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 	 * ha eliminado nada en la lista
 	 */
 	@Override
-	public boolean eliminar(String nombre)
+	public synchronized boolean eliminar(String nombre)
 	{
 		Segmento proceso = super.buscarProceso(nombre);
 		
@@ -69,7 +69,7 @@ public class ListaSiguienteAjuste extends ListaSegmentos
 	}
 	
 	@Override
-	public String toString()
+	public synchronized String toString()
 	{
 		return super.toString() + " : " + this.actual;
 	}
