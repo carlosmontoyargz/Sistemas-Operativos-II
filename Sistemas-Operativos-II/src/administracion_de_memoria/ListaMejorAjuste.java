@@ -12,7 +12,7 @@ public class ListaMejorAjuste extends ListaSegmentos
 	}
 
 	@Override
-	protected Segmento buscarHueco(int longitud)
+	protected synchronized Segmento buscarHueco(int longitud)
 	{
 		// Busca el primer hueco compatible
 		Segmento menor = super.buscarHueco(longitud, null, null);
