@@ -21,7 +21,7 @@ public class AdministracionMemoria
 		AdministradorMemoria administrador = new ListaPrimerAjuste(1024);
 		
 		Thread agregador = new Thread(
-				new Agregador(administrador, listaProcesos, "procesos2.txt"));
+				new Agregador(administrador, listaProcesos, "procesos1.txt"));
 		Thread eliminador = new Thread(
 				new Eliminador(administrador, listaProcesos));
 		
