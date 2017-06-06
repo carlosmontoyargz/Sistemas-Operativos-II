@@ -14,7 +14,7 @@ public class ListaPrimerAjuste extends ListaSegmentos
 	}
 
 	@Override
-	protected Segmento buscarHueco(int longitud)
+	protected synchronized Segmento buscarHueco(int longitud)
 	{
 		return super.buscarHueco(longitud, null, null);
 	}    
