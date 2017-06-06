@@ -27,7 +27,7 @@ public class AjusteRapido implements AdministradorMemoria
 	}
 	
 	@Override
-	public boolean agregar(String nombre, int longitud)
+	public synchronized boolean agregar(String nombre, int longitud)
 	{
 		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
 		
@@ -59,7 +59,7 @@ public class AjusteRapido implements AdministradorMemoria
 	}
 	
 	@Override
-	public boolean eliminar(String nombre)
+	public synchronized boolean eliminar(String nombre)
 	{
 		if (nombre.equals(Segmento.nombreHueco)) return false;
 		
@@ -76,7 +76,7 @@ public class AjusteRapido implements AdministradorMemoria
 		return this.listaHuecos[i].agregar(proceso);
 	}
 	
-	private void fusionarHuecoDerecho(Segmento hueco)
+	private synchronized void fusionarHuecoDerecho(Segmento hueco)
 	{
 		int dirInicio = hueco.getDireccion() + hueco.getLongitud(),
 				i = 0;
@@ -95,7 +95,7 @@ public class AjusteRapido implements AdministradorMemoria
 			hueco.setLongitud(hueco.getLongitud() + huecoDerecho.getLongitud());
 	}
 	
-	private void fusionarHuecoIzquierdo(Segmento hueco)
+	private synchronized void fusionarHuecoIzquierdo(Segmento hueco)
 	{
 		int dirFinal = hueco.getDireccion() - 1,
 				i = 0;
@@ -117,7 +117,7 @@ public class AjusteRapido implements AdministradorMemoria
 		}
 	}
 	
-	private int buscarListaHueco(int longitud)
+	private synchronized int buscarListaHueco(int longitud)
 	{
 		int i = this.listaHuecos.length - 1;
 		while (i >= 0 && listaHuecos[i].geLongitudMinimaAceptada() > longitud)
@@ -127,7 +127,7 @@ public class AjusteRapido implements AdministradorMemoria
 	}
     
 	@Override
-	public String toString()
+	public synchronized String toString()
 	{
 		String str = "[";
 		for (ListaAjusteRapido lista : listaHuecos) str += lista + "\n";
