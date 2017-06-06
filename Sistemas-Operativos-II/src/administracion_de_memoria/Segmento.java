@@ -103,6 +103,6 @@ public class Segmento
 	@Override
 	public String toString()
 	{
-		return "[" + this.Nombre + ", " + this.Direccion + ", " + this.Longitud + "]";
+		return "[" + this.Nombre + " " + this.Direccion + " " + this.Longitud + "]";
 	}
 }
