@@ -10,21 +10,19 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 {
 	private Segmento primero;
 	private Segmento ultimo;
-	private final int memoriaTotal;
 	
 	/**
 	 * Construye una lista de segmentos para con la memoria especificada.
 	 * 
 	 * @param memoriaTotal  La memoria disponible
 	 */
-	public ListaSegmentos(int memoriaTotal)
+	protected ListaSegmentos(int memoriaTotal)
 	{
 		//Crea el hueco inicial
 		Segmento nodoInicial = new Segmento(0, memoriaTotal, null, null);
 		
 		this.primero = nodoInicial;
 		this.ultimo = nodoInicial;
-		this.memoriaTotal = memoriaTotal;
 	}
 	
 	/**
@@ -201,8 +199,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		
 		return true;
 	}
-	
-	public int getMemoriaTotal() { return memoriaTotal; }
 	
 	protected Segmento getPrimero() { return this.primero; }
 	
