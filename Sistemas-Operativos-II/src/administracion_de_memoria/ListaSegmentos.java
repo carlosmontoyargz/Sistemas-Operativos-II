@@ -35,7 +35,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @return  true si el proceso fue agregado correctamente, o false en caso contrario
 	 */
 	@Override
-	public boolean agregar(String nombre, int longitud)
+	public synchronized boolean agregar(String nombre, int longitud)
 	{
 		// Si se intenta agregar un hueco o un proceso con longitud no positiva
 		// la operacion se cancela
@@ -78,7 +78,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @return  El hueco encontrado, o null si no se ha encontrado un hueco adecuado
 	 */
-	protected Segmento buscarHueco(int longitud, Segmento inicio, Segmento final1)
+	protected synchronized Segmento buscarHueco(int longitud, Segmento inicio, Segmento final1)
 	{
 		if (inicio == null) inicio = this.primero;
 		
@@ -97,7 +97,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		return segmento;
 	}
 	
-	private void guardarProceso(Segmento hueco, String nombre, int longitud)
+	private synchronized void guardarProceso(Segmento hueco, String nombre, int longitud)
 	{
 		hueco.setNombre(nombre);
 		
@@ -129,7 +129,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * ha eliminado nada en la lista
 	 */
 	@Override
-	public boolean eliminar(String nombre)
+	public synchronized boolean eliminar(String nombre)
 	{
 		return liberarMemoria(buscarProceso(nombre));
 	}
@@ -141,7 +141,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @return  La referencia al proceso buscado, o null en caso de no ser encontrado
 	 */
-	protected Segmento buscarProceso(String nombre)
+	protected synchronized Segmento buscarProceso(String nombre)
 	{
 		// Si se intenta buscar un hueco la operacion se cancela
 		if (Segmento.isNombreHueco(nombre)) return null;
@@ -162,7 +162,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @return  true si el proceso fue convertido en hueco, false si el argumento
 	 * es null
 	 */
-	protected boolean liberarMemoria(Segmento proceso)
+	protected synchronized boolean liberarMemoria(Segmento proceso)
 	{
 		if (proceso == null) return false;
 		
@@ -200,12 +200,12 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		return true;
 	}
 	
-	protected Segmento getPrimero() { return this.primero; }
+	protected synchronized Segmento getPrimero() { return this.primero; }
 	
-	protected Segmento getUltimo() { return this.ultimo; }
+	protected synchronized Segmento getUltimo() { return this.ultimo; }
 	
 	@Override
-	public String toString()
+	public synchronized String toString()
 	{
 		String lista = "[";
 		Segmento nodo = this.primero;
