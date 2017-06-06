@@ -50,7 +50,7 @@ public class Segmento
 	}
 	
 	/**
-	 * Construye un hueco.
+	 * Construye un hueco con referencias nulas.
 	 *
 	 * @param direccion  La direccion en memoria del hueco
 	 * @param longitud  La longitud en bytes del hueco
