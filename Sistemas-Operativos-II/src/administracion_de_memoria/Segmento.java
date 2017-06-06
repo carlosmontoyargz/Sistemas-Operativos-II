@@ -37,7 +37,7 @@ public class Segmento
 	}
 	
 	/**
-	 * Construye un hueco para la lista de segmentos.
+	 * Construye un hueco.
 	 * 
 	 * @param direccion  La direccion en memoria del hueco
 	 * @param longitud  La longitud en bytes del hueco
@@ -47,6 +47,17 @@ public class Segmento
 	public Segmento(int direccion, int longitud, Segmento anterior, Segmento siguiente)
 	{
 		this(Segmento.nombreHueco, direccion, longitud, anterior, siguiente);
+	}
+	
+	/**
+	 * Construye un hueco.
+	 *
+	 * @param direccion  La direccion en memoria del hueco
+	 * @param longitud  La longitud en bytes del hueco
+	 */
+	public Segmento(int direccion, int longitud)
+	{
+		this(Segmento.nombreHueco, direccion, longitud, null, null);
 	}
 	
 	public Segmento(String nombre, int direccion, int longitud)
