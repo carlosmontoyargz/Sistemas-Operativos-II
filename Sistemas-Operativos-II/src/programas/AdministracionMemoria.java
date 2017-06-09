@@ -33,10 +33,10 @@ public class AdministracionMemoria
 	public void ejecutar(String file, AdministradorMemoria adm) throws FileNotFoundException
 	{
 		// Lista para llevar registro del tiempo de ejecucion de los procesos
-		LinkedList<Proceso> listaProcesos = new LinkedList<>();
+		LinkedList<Proceso> tiemposEjecucion = new LinkedList<>();
 		
-		Thread agregador = new Thread(new Agregador(adm, listaProcesos, file));
-		Thread eliminador = new Thread(new Eliminador(adm, listaProcesos));
+		Thread agregador = new Thread(new Agregador(adm, tiemposEjecucion, file));
+		Thread eliminador = new Thread(new Eliminador(adm, tiemposEjecucion));
 		
 		agregador.start();
 		eliminador.start();
@@ -162,12 +162,12 @@ class Agregador implements Runnable
 class Eliminador implements Runnable
 {
 	private final AdministradorMemoria adm;
-	private final LinkedList<Proceso> listaProcesos;
+	private final LinkedList<Proceso> tiemposEjecucion;
 	
-	public Eliminador(AdministradorMemoria adm, LinkedList<Proceso> listaProcesos)
+	public Eliminador(AdministradorMemoria adm, LinkedList<Proceso> tiemposEjecucion)
 	{
 		this.adm = adm;
-		this.listaProcesos = listaProcesos;
+		this.tiemposEjecucion = tiemposEjecucion;
 	}
 	
 	@Override
@@ -176,9 +176,9 @@ class Eliminador implements Runnable
 		String nombre;
 		while (true)
 		{
-			synchronized (listaProcesos)
+			synchronized (tiemposEjecucion)
 			{
-				Iterator<Proceso> listaIterator = listaProcesos.iterator();
+				Iterator<Proceso> listaIterator = tiemposEjecucion.iterator();
 				Proceso p;
 
 				while (listaIterator.hasNext())
@@ -192,14 +192,14 @@ class Eliminador implements Runnable
 						{
 							listaIterator.remove();
 						
-							System.out.println( "Eliminado proceso: [" + nombre + "]\n"
-									+ adm + "\n" + listaProcesos + "\n");
+							System.out.println("Eliminado proceso: [" + nombre + "]\n"
+									+ adm + "\n" + tiemposEjecucion + "\n");
 						}
 					}
 					else
 						p.decrementarTiempo();
 				}
-				System.out.println(adm + "\n" + listaProcesos + "\n");
+				System.out.println(adm + "\n" + tiemposEjecucion + "\n");
 			}
 			
 			try { Thread.sleep(50); }
