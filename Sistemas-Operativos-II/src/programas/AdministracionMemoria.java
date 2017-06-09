@@ -112,37 +112,22 @@ class Agregador implements Runnable
 	@Override
 	public void run()
 	{
-		String nombre;
-		int longitud, tiempo, retraso, retrasoTotal = 0;
-		
+		int retraso, retrasoTotal = 0;
 		long tiempoInicial = new Date().getTime();
-		while (reader.hasNext())
+		
+		try
 		{
-			synchronized (listaProcesos)
+			while (reader.hasNext())
 			{
-				nombre = reader.next();
-				longitud = reader.nextInt();
-				tiempo = reader.nextInt();
-				
-				if (adm.agregar(nombre, longitud))
-				{
-					listaProcesos.add(new Proceso(nombre, tiempo));
-					System.out.println("Agregado proceso: [" +
-							nombre + " " + longitud + " "  + tiempo + "]\n"
-							+ adm + "\n" + listaProcesos + "\n");
-				}
-				else
-				{
-					System.out.println("Rechazado proceso: [" +
-							nombre + " " + longitud + " "  + tiempo + "]\n");
-					this.numProcesosRechazados++;
-				}
+				agregarProceso();
+
+				retraso = ((int) (Math.random() * 5) + 1) * 50;
+				retrasoTotal += retraso;
+				Thread.sleep(retraso);
 			}
-			retraso = ((int) (Math.random() * 5) + 1) * 50;
-			retrasoTotal += retraso;
-			try { Thread.sleep(retraso); }
-			catch (InterruptedException ex) {}
 		}
+		catch (InterruptedException ex) {}
+		
 		long tiempoFinal = new Date().getTime();
 		
 		this.milisegundosEjecucion = tiempoFinal - tiempoInicial - (long) retrasoTotal;
@@ -151,6 +136,30 @@ class Agregador implements Runnable
 		System.out.println("Total de milisegundos: " + this.milisegundosEjecucion + "\n");
 		
 		reader.close();
+	}
+	
+	private void agregarProceso()
+	{
+		synchronized (listaProcesos)
+		{
+			String nombre = reader.next();
+			int longitud = reader.nextInt();
+			int tiempo = reader.nextInt();
+
+			if (adm.agregar(nombre, longitud))
+			{
+				listaProcesos.add(new Proceso(nombre, tiempo));
+				System.out.println("Agregado proceso: [" + nombre + " " + longitud +
+						" "  + tiempo + "]\n"
+						+ adm + "\n" + listaProcesos + "\n");
+			}
+			else
+			{
+				System.out.println("Rechazado proceso: [" + nombre + " " + longitud +
+						" "  + tiempo + "]\n");
+				this.numProcesosRechazados++;
+			}
+		}
 	}
 }
 
@@ -173,37 +182,42 @@ class Eliminador implements Runnable
 	@Override
 	public void run()
 	{
-		String nombre;
-		while (true)
+		try
 		{
-			synchronized (tiemposEjecucion)
+			while (true)
 			{
-				Iterator<Proceso> listaIterator = tiemposEjecucion.iterator();
-				Proceso p;
-
-				while (listaIterator.hasNext())
-				{
-					p = listaIterator.next();
-					
-					if (p.terminado())
-					{
-						nombre = p.getNombre();
-						if (adm.eliminar(p.getNombre()))
-						{
-							listaIterator.remove();
-						
-							System.out.println("Eliminado proceso: [" + nombre + "]\n"
-									+ adm + "\n" + tiemposEjecucion + "\n");
-						}
-					}
-					else
-						p.decrementarTiempo();
-				}
-				System.out.println(adm + "\n" + tiemposEjecucion + "\n");
+				eliminarProcesos();
+				Thread.sleep(50);
 			}
-			
-			try { Thread.sleep(50); }
-			catch (InterruptedException ex) {}
+		}
+		catch (InterruptedException ex) {}
+	}
+	
+	private void eliminarProcesos()
+	{
+		synchronized (tiemposEjecucion)
+		{
+			Iterator<Proceso> listaIterator = tiemposEjecucion.iterator();
+			Proceso p;
+
+			while (listaIterator.hasNext())
+			{
+				p = listaIterator.next();
+
+				if (p.terminado())
+				{
+					if (adm.eliminar(p.getNombre()))
+					{
+						listaIterator.remove();
+
+						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n"
+								+ adm + "\n" + tiemposEjecucion + "\n");
+					}
+				}
+				else
+					p.decrementarTiempo();
+			}
+			System.out.println(adm + "\n" + tiemposEjecucion + "\n");
 		}
 	}
 }
