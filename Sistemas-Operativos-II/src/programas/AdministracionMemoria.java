@@ -17,13 +17,26 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		LinkedList<Proceso> listaProcesos = new LinkedList<>();
-		AdministradorMemoria administrador = new ListaPrimerAjuste(1024);
+		AdministracionMemoria am = new AdministracionMemoria();
 		
-		Thread agregador = new Thread(
-				new Agregador(administrador, listaProcesos, "procesos1.txt"));
-		Thread eliminador = new Thread(
-				new Eliminador(administrador, listaProcesos));
+		try
+		{
+			am.guardarArchivosProcesos();
+			am.ejecutar("procesos1.txt", new ListaPrimerAjuste(1024));
+		}
+		catch (FileNotFoundException e)
+		{
+			System.out.println("error en la creacion o lectura de los archivos");
+		}
+	}
+	
+	public void ejecutar(String file, AdministradorMemoria adm) throws FileNotFoundException
+	{
+		// Lista para llevar registro del tiempo de ejecucion de los procesos
+		LinkedList<Proceso> listaProcesos = new LinkedList<>();
+		
+		Thread agregador = new Thread(new Agregador(adm, listaProcesos, file));
+		Thread eliminador = new Thread(new Eliminador(adm, listaProcesos));
 		
 		agregador.start();
 		eliminador.start();
@@ -31,44 +44,43 @@ public class AdministracionMemoria
 	
 	/**
 	 * Método para crear procesos aleatorios en un archivo de texto.
+	 * 
+	 * @throws java.io.FileNotFoundException
 	 */
-	public static void guardarArchivoTexto()
+	public void guardarArchivosProcesos() throws FileNotFoundException
 	{
 		String p = "P";
 		int longitud, tiempo;
 		
-		try (PrintWriter writer = new PrintWriter("procesos1.txt"))
+		// Procesos de tamano y tiempo aleatorio
+		try (PrintWriter pw1 = new PrintWriter("procesos1.txt");
+			 PrintWriter pw2 = new PrintWriter("procesos2.txt");
+			 PrintWriter pw3 = new PrintWriter("procesos3.txt"))
 		{
+			// Procesos de tamano y tiempo aleatorios
 			for (int i = 0; i < 1000; i++)
 			{
 				longitud = (int) (Math.random() * 256) + 1;
 				tiempo = (int) (Math.random() * 15) + 1;
-				writer.println(p + i + " " + longitud + " " + tiempo);
+				pw1.println(p + i + " " + longitud + " " + tiempo);
 			}
-		}
-		catch(FileNotFoundException e) {}
-		
-		try (PrintWriter writer = new PrintWriter("procesos2.txt"))
-		{
+			
+			// Procesos de tamano creciente y tiempo aleatorio
 			for (int i = 0; i < 1000; i++)
 			{
 				longitud = i / 4 + 4;
 				tiempo = (int) (Math.random() * 15) + 1;
-				writer.println(p + i + " " + longitud + " " + tiempo);
+				pw2.println(p + i + " " + longitud + " " + tiempo);
 			}
-		}
-		catch(FileNotFoundException e) {}
-		
-		try (PrintWriter writer = new PrintWriter("procesos3.txt"))
-		{
+			
+			// Procesos de tamano decreciente y tiempo aleatorio
 			for (int i = 0; i < 1000; i++)
 			{
-				longitud = (1004 - i) / 4;
+				longitud = (1000 - i) / 4 + 4;
 				tiempo = (int) (Math.random() * 15) + 1;
-				writer.println(p + i + " " + longitud + " " + tiempo);
+				pw3.println(p + i + " " + longitud + " " + tiempo);
 			}
 		}
-		catch(FileNotFoundException e) {}
 	}
 }
 
@@ -81,18 +93,17 @@ class Agregador implements Runnable
 {
 	private final AdministradorMemoria adm;
 	private final LinkedList<Proceso> listaProcesos;
-	private Scanner reader;
+	private final Scanner reader;
 	
 	private int numProcesosRechazados;
 	private long milisegundosEjecucion;
 	
-	public Agregador(AdministradorMemoria adm, LinkedList<Proceso> listaProcesos, 
-			String archivo)
+	public Agregador(AdministradorMemoria adm, LinkedList<Proceso> listaProcesos,  String archivo)
+			throws FileNotFoundException
 	{
 		this.adm = adm;
 		this.listaProcesos = listaProcesos;
-		try { this.reader = new Scanner(new FileReader(archivo)); }
-		catch (FileNotFoundException ex) {}
+		this.reader = new Scanner(new FileReader(archivo));
 		
 		this.numProcesosRechazados = 0;
 		this.milisegundosEjecucion = 0;
@@ -127,7 +138,7 @@ class Agregador implements Runnable
 					this.numProcesosRechazados++;
 				}
 			}
-			retraso = ((int) (Math.random() * 5) + 1) * 100;
+			retraso = ((int) (Math.random() * 5) + 1) * 50;
 			retrasoTotal += retraso;
 			try { Thread.sleep(retraso); }
 			catch (InterruptedException ex) {}
@@ -137,7 +148,7 @@ class Agregador implements Runnable
 		this.milisegundosEjecucion = tiempoFinal - tiempoInicial - (long) retrasoTotal;
 		
 		System.out.println("Total de procesos rechazados: " + this.numProcesosRechazados);
-		System.out.println("Total de milisegundos: " + this.milisegundosEjecucion);
+		System.out.println("Total de milisegundos: " + this.milisegundosEjecucion + "\n");
 		
 		reader.close();
 	}
@@ -191,7 +202,7 @@ class Eliminador implements Runnable
 				System.out.println(adm + "\n" + listaProcesos + "\n");
 			}
 			
-			try { Thread.sleep(100); }
+			try { Thread.sleep(50); }
 			catch (InterruptedException ex) {}
 		}
 	}
