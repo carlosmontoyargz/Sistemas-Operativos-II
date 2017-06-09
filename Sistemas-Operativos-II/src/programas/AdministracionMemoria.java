@@ -21,8 +21,8 @@ public class AdministracionMemoria
 		
 		try
 		{
-			am.guardarArchivosProcesos();
-			am.ejecutar("procesos1.txt", new ListaPrimerAjuste(1024));
+//			am.guardarArchivosProcesos();
+			am.ejecutar("procesos1.txt", new ListaMejorAjuste(1024));
 		}
 		catch (FileNotFoundException e)
 		{
