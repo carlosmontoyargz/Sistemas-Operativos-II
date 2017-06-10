@@ -173,10 +173,13 @@ class Eliminador implements Runnable
 	private final AdministradorMemoria adm;
 	private final LinkedList<Proceso> tiemposEjecucion;
 	
+	private boolean ejecucion;
+	
 	public Eliminador(AdministradorMemoria adm, LinkedList<Proceso> tiemposEjecucion)
 	{
 		this.adm = adm;
 		this.tiemposEjecucion = tiemposEjecucion;
+		this.ejecucion = true;
 	}
 	
 	@Override
@@ -184,7 +187,7 @@ class Eliminador implements Runnable
 	{
 		try
 		{
-			while (true)
+			while (ejecucion)
 			{
 				eliminarProcesos();
 				Thread.sleep(50);
@@ -212,6 +215,9 @@ class Eliminador implements Runnable
 
 						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n"
 								+ adm + "\n" + tiemposEjecucion + "\n");
+						
+						if (p.getNombre().equals("P999"))
+							this.ejecucion = false;
 					}
 				}
 				else
