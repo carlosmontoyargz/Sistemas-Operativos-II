@@ -39,11 +39,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public synchronized boolean agregar(String nombre, int longitud)
 	{
-		return agregarProceso(nombre, longitud);
-	}
-
-	private synchronized boolean agregarProceso(String nombre, int longitud)
-	{
 		// Si se intenta agregar un hueco o un proceso con longitud no positiva
 		// la operacion se cancela
 		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
