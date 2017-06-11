@@ -22,7 +22,7 @@ public class AdministracionMemoria
 		try
 		{
 //			am.guardarArchivosProcesos();
-			am.ejecutar("procesos1.txt", new ListaMejorAjuste(1024));
+			am.ejecutarAdministrador("procesos1.txt", new ListaMejorAjuste(1024));
 		}
 		catch (FileNotFoundException e)
 		{
@@ -30,7 +30,7 @@ public class AdministracionMemoria
 		}
 	}
 	
-	public void ejecutar(String file, AdministradorMemoria adm) throws FileNotFoundException
+	public void ejecutarAdministrador(String file, AdministradorMemoria adm) throws FileNotFoundException
 	{
 		// Lista para llevar registro del tiempo de ejecucion de los procesos
 		LinkedList<Proceso> tiemposEjecucion = new LinkedList<>();
@@ -223,7 +223,8 @@ class Eliminador implements Runnable
 				else
 					p.decrementarTiempo();
 			}
-			System.out.println(adm + "\n" + tiemposEjecucion + "\n");
+			System.out.println("Memoria:\n" + adm + "\n" +
+					"Procesos:\n" + tiemposEjecucion + "\n");
 		}
 	}
 }

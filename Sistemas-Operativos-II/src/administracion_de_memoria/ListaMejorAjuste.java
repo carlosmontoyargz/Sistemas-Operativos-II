@@ -15,7 +15,7 @@ public class ListaMejorAjuste extends ListaSegmentos
 	protected synchronized Segmento buscarHueco(int longitud)
 	{
 		// Busca el primer hueco compatible
-		Segmento menor = super.buscarHueco(longitud, null, null);
+		Segmento menor = super.buscarHueco(longitud, 0);
 		
 		if (menor != null)
 		{

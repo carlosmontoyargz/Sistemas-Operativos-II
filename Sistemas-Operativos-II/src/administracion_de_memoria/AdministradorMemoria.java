@@ -23,4 +23,19 @@ public interface AdministradorMemoria
 	 * @return 
 	 */
 	public boolean eliminar(String nombre);
+	
+	/**
+	 * @return  El tiempo de ejecucion total agregando procesos.
+	 */
+	public long tiempoEjecucionAgregacion();
+	
+	/**
+	 * @return  El tiempo de ejecucion total eliminando procesos.
+	 */
+	public long tiempoEjecucionEliminacion();
+	
+	/**
+	 * @return  El total de procesos rechazados
+	 */
+	public int numProcesosRechazados();
 }

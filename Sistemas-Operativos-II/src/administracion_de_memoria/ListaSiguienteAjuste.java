@@ -8,69 +8,24 @@ package administracion_de_memoria;
  */
 public class ListaSiguienteAjuste extends ListaSegmentos
 {
-	private Segmento actual;
-	
 	public ListaSiguienteAjuste(int memoriaTotal)
 	{
 		super(memoriaTotal);
-		this.actual = super.getPrimero();
-	}
-	
-	/**
-	 * Agrega un nuevo proceso a la lista mediante el algoritmo de siguiente ajuste.
-	 * 
-	 * @param nombre  El nombre del proceso por agregar
-	 * @param longitud  La longitud en bytes del proceso por agregar
-	 * 
-	 * @return  true si el proceso fue agregado correctamente, o false en caso
-	 * contrario
-	 */
-	@Override
-	public synchronized boolean agregar(String nombre, int longitud)
-	{
-		boolean agregado = super.agregar(nombre, longitud);
-		if (agregado)
-			actual = (actual.getSiguiente() != null)? actual.getSiguiente()
-					: super.getPrimero();
-		
-		return agregado;
 	}
 	
 	@Override
 	protected synchronized Segmento buscarHueco(int longitud)
 	{
-		Segmento segmento = super.buscarHueco(longitud, actual, null);
+		Segmento segmento = super.buscarHueco(longitud, 2);
 		if (segmento == null)
-			segmento = super.buscarHueco(longitud, null, actual);
-		
-		if (segmento != null) this.actual = segmento;
+			segmento = super.buscarHueco(longitud, 1);
 		
 		return segmento;
-	}
-	
-	/**
-	 * Elimina el proceso con el nombre especificado.
-	 * 
-	 * @param nombre  El nombre del proceso a eliminar
-	 * 
-	 * @return  true si el proceso fue eliminado correctamente, o false si no se
-	 * ha eliminado nada en la lista
-	 */
-	@Override
-	public synchronized boolean eliminar(String nombre)
-	{
-		Segmento proceso = super.buscarProceso(nombre);
-		
-		if (proceso != null && actual.isHueco()
-				&& (actual == proceso.getAnterior() || actual == proceso.getSiguiente()))
-			actual = proceso;
-		
-		return super.liberarMemoria(proceso);
 	}
 	
 	@Override
 	public synchronized String toString()
 	{
-		return super.toString() + " : " + this.actual;
+		return super.toString() + " : " + super.getActual();
 	}
 }

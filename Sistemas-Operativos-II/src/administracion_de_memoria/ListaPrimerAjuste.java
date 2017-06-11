@@ -1,5 +1,7 @@
 package administracion_de_memoria;
 
+import java.util.Date;
+
 /**
  * Clase que permite administrar una lista de segmentos de memoria mediante el
  * algoritmo de primer ajuste.
@@ -12,10 +14,4 @@ public class ListaPrimerAjuste extends ListaSegmentos
 	{
 		super(memoriaTotal);
 	}
-
-	@Override
-	protected synchronized Segmento buscarHueco(int longitud)
-	{
-		return super.buscarHueco(longitud, null, null);
-	}    
 }

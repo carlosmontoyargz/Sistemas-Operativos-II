@@ -1,5 +1,7 @@
 package administracion_de_memoria;
 
+import java.util.Date;
+
 /**
  * Clase abstracta que permite implementar un administrador de memoria mediante
  * una lista doblemente ligada.
@@ -10,6 +12,11 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 {
 	private Segmento primero;
 	private Segmento ultimo;
+	private Segmento actual;
+	
+	private long tiempoEjecucionAgregacion;
+	private long tiempoEjecucionEliminacion;
+	private int numProcesosRechazados;
 	
 	/**
 	 * Construye una lista de segmentos para con la memoria especificada.
@@ -23,19 +30,37 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		
 		this.primero = nodoInicial;
 		this.ultimo = nodoInicial;
+		this.actual = nodoInicial;
+		
+		this.tiempoEjecucionAgregacion = 0;
+		this.tiempoEjecucionEliminacion = 0;
+		this.numProcesosRechazados = 0;
 	}
-	
+		
 	/**
 	 * Agrega un nuevo proceso a la lista de segmentos. La operacion se cancela
 	 * si se intenta agregar un hueco.
 	 * 
-	 * @param nombre  El nombre del nuevo proceso
-	 * @param longitud  El tamano en bytes del nuevo proceso
+	 * @param nombre  El nombre del proceso por agregar
+	 * @param longitud  El tamano en bytes del proceso por agregar
 	 * 
 	 * @return  true si el proceso fue agregado correctamente, o false en caso contrario
 	 */
 	@Override
 	public synchronized boolean agregar(String nombre, int longitud)
+	{
+		// Agrega el proceso
+		long t1 = new Date().getTime();
+		boolean agregado = agregarProceso(nombre, longitud);
+		long t2 = new Date().getTime();
+		
+		//Actualiza estadisticas
+		if (!agregado) this.numProcesosRechazados ++;
+		this.tiempoEjecucionAgregacion += t2 - t1;
+		return agregado;
+	}
+
+	private synchronized boolean agregarProceso(String nombre, int longitud)
 	{
 		// Si se intenta agregar un hueco o un proceso con longitud no positiva
 		// la operacion se cancela
@@ -45,25 +70,34 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		Segmento hueco = buscarHueco(longitud);
 		
 		// Si no se encuentra un hueco adecuado o el segmento no es un hueco la operacion se cancela
-		if (hueco == null) return false; 
+		if (hueco == null) return false;
 		if (!hueco.isHueco()) return false;
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
 		
+		// Actualiza la referencia actual
+		actual = (hueco.getSiguiente() != null) ? hueco.getSiguiente()
+				:this.primero;
+		
 		return true;
 	}
 	
 	/**
-	 * Busca el hueco en el que se almacenara el proceso nuevo. Si no se encuentra
-	 * un hueco adecuado, el proceso debe retornar null. El segmento retornado debe
-	 * ser un hueco.
+	 * Busca el hueco en el que se almacenara el proceso nuevo. Las subclases deben
+	 * sobreescribir este metodo para cambiar el algoritmo de busqueda del hueco.
+	 * Si el metodo no se sobreescribe se utiliza el algoritmo de primer ajuste.
+	 * Si no se encuentra un hueco adecuado, el proceso debe retornar null.
+	 * El segmento retornado debe ser un hueco.
 	 * 
 	 * @param longitud  El tamano en bytes del nuevo proceso
 	 * 
 	 * @return  El hueco adecuado en el que guardar el proceso nuevo
 	 */
-	protected abstract Segmento buscarHueco(int longitud);
+	protected synchronized Segmento buscarHueco(int longitud)
+	{
+		return buscarHueco(longitud, 0);
+	}
 	
 	/**
 	 * Busca el primer hueco en la lista con la longitud en bytes necesaria para el
@@ -71,16 +105,21 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * especificado.
 	 * 
 	 * @param longitud  La longitud en bytes del proceso
-	 * @param inicio  El segmento en el que se comienza a buscar. Si es null se
-	 * realiza la busqueda desde el segmento inicial.
-	 * @param final1  El segmento en el que se termina de buscar. Este segmeno no
-	 * es considerado en la busqueda.
+	 * @param tipo  El  tipo de busqueda dentro de la lista:
+	 *					0 para buscar desde el inicio hasta el final,
+	 *					1 para buscar desde el inicio hasta el actual,
+	 *					2 para buscar desde el actual hasta el final
 	 * 
 	 * @return  El hueco encontrado, o null si no se ha encontrado un hueco adecuado
 	 */
-	protected synchronized Segmento buscarHueco(int longitud, Segmento inicio, Segmento final1)
+	protected synchronized Segmento buscarHueco(int longitud, int tipo)
 	{
-		if (inicio == null) inicio = this.primero;
+		Segmento inicio = this.primero, final1 = null;
+		
+		if (tipo == 1)
+			final1 = this.actual;
+		else if (tipo == 2)
+			inicio = this.actual;
 		
 		boolean encontrado = false;
 		Segmento segmento = inicio;
@@ -131,7 +170,11 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public synchronized boolean eliminar(String nombre)
 	{
-		return liberarMemoria(buscarProceso(nombre));
+		long t1 = new Date().getTime();
+		boolean result = liberarMemoria(buscarProceso(nombre));
+		long t2 = new Date().getTime();
+		this.tiempoEjecucionEliminacion += t2 - t1;
+		return result;
 	}
 	
 	/**
@@ -167,6 +210,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		if (proceso == null) return false;
 		
 		proceso.setNombre(Segmento.nombreHueco);
+		this.actual = proceso;
 		
 		// Fusiona los huecos contiguos
 		Segmento anterior = proceso.getAnterior();
@@ -200,9 +244,38 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		return true;
 	}
 	
-	protected synchronized Segmento getPrimero() { return this.primero; }
+	@Override
+	public long tiempoEjecucionAgregacion()
+	{
+		return tiempoEjecucionAgregacion;
+	}
+
+	@Override
+	public long tiempoEjecucionEliminacion()
+	{
+		return tiempoEjecucionEliminacion;
+	}
+
+	@Override
+	public int numProcesosRechazados()
+	{
+		return this.numProcesosRechazados;
+	}
 	
-	protected synchronized Segmento getUltimo() { return this.ultimo; }
+	protected synchronized Segmento getPrimero()
+	{
+		return this.primero;
+	}
+	
+	protected synchronized Segmento getUltimo()
+	{
+		return this.ultimo;
+	}
+	
+	protected synchronized Segmento getActual()
+	{
+		return this.actual;
+	}
 	
 	@Override
 	public synchronized String toString()
