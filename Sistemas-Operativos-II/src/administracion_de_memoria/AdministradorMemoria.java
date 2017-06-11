@@ -8,7 +8,7 @@ package administracion_de_memoria;
 public interface AdministradorMemoria
 {
 	/**
-	 * Asigna memoria a un proceso.
+	 * Agrega un proceso a la memoria.
 	 * 
 	 * @param nombre  El nombre del proceso a guardar.
 	 * @param longitud  El tamano en bytes del proceso.
@@ -17,7 +17,7 @@ public interface AdministradorMemoria
 	public boolean agregar(String nombre, int longitud);
 	
 	/**
-	 * Elimina un proceso guardado en memoria.
+	 * Elimina un proceso guardado en la memoria.
 	 * 
 	 * @param nombre  El nombre del proceso a eliminar
 	 * @return 
