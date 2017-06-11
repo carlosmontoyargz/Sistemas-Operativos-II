@@ -188,13 +188,13 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		if (proceso == null) return false;
 		
 		proceso.setNombre(Segmento.nombreHueco);
-		this.actual = proceso;
 		
 		// Fusiona los huecos contiguos
 		Segmento anterior = proceso.getAnterior();
-		Segmento siguiente = proceso.getSiguiente();		
+		Segmento siguiente = proceso.getSiguiente();
 		if (anterior != null && anterior.isHueco())
 		{
+			if (actual == anterior) actual = proceso;
 			proceso.setDireccion(anterior.getDireccion());
 			proceso.setLongitud(proceso.getLongitud() + anterior.getLongitud());
 			proceso.setAnterior(anterior.getAnterior());
@@ -208,6 +208,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		}
 		if (siguiente != null && siguiente.isHueco())
 		{
+			if (actual == siguiente) actual = proceso;
 			proceso.setLongitud(proceso.getLongitud() + siguiente.getLongitud());
 			proceso.setSiguiente(siguiente.getSiguiente());
 			
