@@ -17,7 +17,7 @@ public interface AdministradorMemoria
 	public boolean agregar(String nombre, int longitud);
 	
 	/**
-	 * Elimina un proceso guardado memoria.
+	 * Elimina un proceso guardado en memoria.
 	 * 
 	 * @param nombre  El nombre del proceso a eliminar
 	 * @return 
