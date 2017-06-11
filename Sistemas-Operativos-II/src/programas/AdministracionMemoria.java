@@ -22,7 +22,7 @@ public class AdministracionMemoria
 		try
 		{
 //			am.guardarArchivosProcesos();
-			am.ejecutarAdministrador("procesos1.txt", new ListaMejorAjuste(1024));
+			am.ejecutarAdministrador("procesos1.txt", new ListaSiguienteAjuste(1024));
 		}
 		catch (FileNotFoundException e)
 		{
@@ -30,7 +30,8 @@ public class AdministracionMemoria
 		}
 	}
 	
-	public void ejecutarAdministrador(String file, AdministradorMemoria adm) throws FileNotFoundException
+	public void ejecutarAdministrador(String file, AdministradorMemoria adm)
+			throws FileNotFoundException
 	{
 		// Lista para llevar registro del tiempo de ejecucion de los procesos
 		LinkedList<Proceso> tiemposEjecucion = new LinkedList<>();
@@ -95,18 +96,12 @@ class Agregador implements Runnable
 	private final LinkedList<Proceso> listaProcesos;
 	private final Scanner reader;
 	
-	private int numProcesosRechazados;
-	private long milisegundosEjecucion;
-	
 	public Agregador(AdministradorMemoria adm, LinkedList<Proceso> listaProcesos,  String archivo)
 			throws FileNotFoundException
 	{
 		this.adm = adm;
 		this.listaProcesos = listaProcesos;
 		this.reader = new Scanner(new FileReader(archivo));
-		
-		this.numProcesosRechazados = 0;
-		this.milisegundosEjecucion = 0;
 	}
 	
 	@Override
@@ -130,11 +125,6 @@ class Agregador implements Runnable
 		
 		long tiempoFinal = new Date().getTime();
 		
-		this.milisegundosEjecucion = tiempoFinal - tiempoInicial - (long) retrasoTotal;
-		
-		System.out.println("Total de procesos rechazados: " + this.numProcesosRechazados);
-		System.out.println("Total de milisegundos: " + this.milisegundosEjecucion + "\n");
-		
 		reader.close();
 	}
 	
@@ -154,11 +144,8 @@ class Agregador implements Runnable
 						+ adm + "\n" + listaProcesos + "\n");
 			}
 			else
-			{
 				System.out.println("Rechazado proceso: [" + nombre + " " + longitud +
 						" "  + tiempo + "]\n");
-				this.numProcesosRechazados++;
-			}
 		}
 	}
 }
@@ -223,8 +210,7 @@ class Eliminador implements Runnable
 				else
 					p.decrementarTiempo();
 			}
-			System.out.println("Memoria:\n" + adm + "\n" +
-					"Procesos:\n" + tiemposEjecucion + "\n");
+			System.out.println("Procesos:\n" + tiemposEjecucion + "\n");
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package administracion_de_memoria;
 
-import java.util.Date;
-
 /**
  * Clase abstracta que permite implementar un administrador de memoria mediante
  * una lista doblemente ligada.
@@ -13,10 +11,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	private Segmento primero;
 	private Segmento ultimo;
 	private Segmento actual;
-	
-	private long tiempoEjecucionAgregacion;
-	private long tiempoEjecucionEliminacion;
-	private int numProcesosRechazados;
 	
 	/**
 	 * Construye una lista de segmentos para con la memoria especificada.
@@ -31,10 +25,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		this.primero = nodoInicial;
 		this.ultimo = nodoInicial;
 		this.actual = nodoInicial;
-		
-		this.tiempoEjecucionAgregacion = 0;
-		this.tiempoEjecucionEliminacion = 0;
-		this.numProcesosRechazados = 0;
 	}
 		
 	/**
@@ -49,15 +39,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public synchronized boolean agregar(String nombre, int longitud)
 	{
-		// Agrega el proceso
-		long t1 = new Date().getTime();
-		boolean agregado = agregarProceso(nombre, longitud);
-		long t2 = new Date().getTime();
-		
-		//Actualiza estadisticas
-		if (!agregado) this.numProcesosRechazados ++;
-		this.tiempoEjecucionAgregacion += t2 - t1;
-		return agregado;
+		return agregarProceso(nombre, longitud);
 	}
 
 	private synchronized boolean agregarProceso(String nombre, int longitud)
@@ -170,11 +152,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	@Override
 	public synchronized boolean eliminar(String nombre)
 	{
-		long t1 = new Date().getTime();
-		boolean result = liberarMemoria(buscarProceso(nombre));
-		long t2 = new Date().getTime();
-		this.tiempoEjecucionEliminacion += t2 - t1;
-		return result;
+		return liberarMemoria(buscarProceso(nombre));
 	}
 	
 	/**
@@ -242,24 +220,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		}
 		
 		return true;
-	}
-	
-	@Override
-	public long tiempoEjecucionAgregacion()
-	{
-		return tiempoEjecucionAgregacion;
-	}
-
-	@Override
-	public long tiempoEjecucionEliminacion()
-	{
-		return tiempoEjecucionEliminacion;
-	}
-
-	@Override
-	public int numProcesosRechazados()
-	{
-		return this.numProcesosRechazados;
 	}
 	
 	protected synchronized Segmento getPrimero()

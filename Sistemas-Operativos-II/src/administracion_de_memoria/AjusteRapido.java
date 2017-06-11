@@ -9,6 +9,10 @@ public class AjusteRapido implements AdministradorMemoria
 	private final ListaAjusteRapido[] listaHuecos;
 	private final ListaAjusteRapido listaProcesos;
 	
+	private long tiempoEjecucionAgregacion;
+	private long tiempoEjecucionEliminacion;
+	private int numProcesosRechazados;
+	
 	public AjusteRapido(int memoriaTotal)
 	{
 		this.listaHuecos = new ListaAjusteRapido[7];

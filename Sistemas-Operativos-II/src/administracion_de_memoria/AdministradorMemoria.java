@@ -23,19 +23,25 @@ public interface AdministradorMemoria
 	 * @return 
 	 */
 	public boolean eliminar(String nombre);
-	
-	/**
-	 * @return  El tiempo de ejecucion total agregando procesos.
-	 */
-	public long tiempoEjecucionAgregacion();
-	
-	/**
-	 * @return  El tiempo de ejecucion total eliminando procesos.
-	 */
-	public long tiempoEjecucionEliminacion();
-	
-	/**
-	 * @return  El total de procesos rechazados
-	 */
-	public int numProcesosRechazados();
 }
+
+/*
+// Agrega el proceso
+		long t1 = new Date().getTime();
+		boolean agregado = agregarProceso(nombre, longitud);
+		long t2 = new Date().getTime();
+		
+		//Actualiza estadisticas
+		if (!agregado) this.numProcesosRechazados ++;
+		this.tiempoEjecucionAgregacion += t2 - t1;
+		System.out.println(t2 + " "  + t1);
+		return agregado;
+
+
+System.out.println("Tiempo de ejecucion de agregacion: " +
+				adm.tiempoEjecucionAgregacion() + "\n" + 
+				"Tiempo de ejecucion de eliminacion: " +
+				adm.tiempoEjecucionEliminacion() + "\n" +
+				"Total de procesos rechazados: " +
+				adm.numProcesosRechazados() + "\n");
+*/
