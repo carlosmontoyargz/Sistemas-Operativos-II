@@ -22,7 +22,7 @@ public class AdministracionMemoria
 		try
 		{
 //			am.guardarArchivosProcesos();
-			am.ejecutarHilos("procesos1.txt", new AjusteRapido(1024));
+			am.lanzarHilos("procesos1.txt", new AjusteRapido(1024));
 		}
 		catch (FileNotFoundException e)
 		{
@@ -34,7 +34,7 @@ public class AdministracionMemoria
 		}
 	}
 	
-	public void ejecutarHilos(String file, AdministradorMemoria adm)
+	public void lanzarHilos(String file, AdministradorMemoria adm)
 			throws FileNotFoundException, InterruptedException
 	{
 		// Lista para llevar registro del tiempo de ejecucion de los procesos
