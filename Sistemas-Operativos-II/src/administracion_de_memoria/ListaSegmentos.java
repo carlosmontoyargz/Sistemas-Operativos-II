@@ -157,7 +157,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @return  La referencia al proceso buscado, o null en caso de no ser encontrado
 	 */
-	protected synchronized Segmento buscarProceso(String nombre)
+	private synchronized Segmento buscarProceso(String nombre)
 	{
 		// Si se intenta buscar un hueco la operacion se cancela
 		if (Segmento.isNombreHueco(nombre)) return null;
@@ -178,7 +178,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @return  true si el proceso fue convertido en hueco, false si el argumento
 	 * es null
 	 */
-	protected synchronized boolean liberarMemoria(Segmento proceso)
+	private synchronized boolean liberarMemoria(Segmento proceso)
 	{
 		if (proceso == null) return false;
 		
