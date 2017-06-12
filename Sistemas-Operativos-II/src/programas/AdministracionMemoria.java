@@ -17,12 +17,38 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		AdministracionMemoria am = new AdministracionMemoria();
-		
+		new AdministracionMemoria().ejecutar();
+	}
+	
+	public void ejecutar()
+	{
 		try
 		{
-//			am.guardarArchivosProcesos();
-			am.lanzarHilos("procesos1.txt", new AjusteRapido(1024));
+//			guardarArchivosProcesos();
+			System.out.println("Primer ajuste");
+			lanzarHilos("aleatorio.txt", new ListaPrimerAjuste(1024));
+			lanzarHilos("ascendente.txt", new ListaPrimerAjuste(1024));
+			lanzarHilos("descendente.txt", new ListaPrimerAjuste(1024));
+			
+			System.out.println("Siguiente ajuste");
+			lanzarHilos("aleatorio.txt", new ListaSiguienteAjuste(1024));
+			lanzarHilos("ascendente.txt", new ListaSiguienteAjuste(1024));
+			lanzarHilos("descendente.txt", new ListaSiguienteAjuste(1024));
+			
+			System.out.println("Mejor ajuste");
+			lanzarHilos("aleatorio.txt", new ListaMejorAjuste(1024));
+			lanzarHilos("ascendente.txt", new ListaMejorAjuste(1024));
+			lanzarHilos("descendente.txt", new ListaMejorAjuste(1024));
+			
+			System.out.println("Peor ajuste");
+			lanzarHilos("aleatorio.txt", new ListaPeorAjuste(1024));
+			lanzarHilos("ascendente.txt", new ListaPeorAjuste(1024));
+			lanzarHilos("descendente.txt", new ListaPeorAjuste(1024));
+			
+			System.out.println("Ajuste Rapido");
+			lanzarHilos("aleatorio.txt", new AjusteRapido(1024));
+			lanzarHilos("ascendente.txt", new AjusteRapido(1024));
+			lanzarHilos("descendente.txt", new AjusteRapido(1024));
 		}
 		catch (FileNotFoundException e)
 		{
@@ -39,15 +65,19 @@ public class AdministracionMemoria
 	{
 		// Lista para llevar registro del tiempo de ejecucion de los procesos
 		LinkedList<Proceso> procesosEjecucion = new LinkedList<>();
-		Estadisticas estadisticas = new Estadisticas();
+		Estadisticas estadisticas = new Estadisticas(file);
 		
 		long t1 = new Date().getTime();
+		
 		Thread agregador = new Thread(new Agregador(adm, procesosEjecucion, file, estadisticas));
 		Thread eliminador = new Thread(new Eliminador(adm, procesosEjecucion));
+		
 		agregador.start();
 		eliminador.start();
+		
 		agregador.join();
 		eliminador.join();
+		
 		long t2 = new Date().getTime();
 		
 		estadisticas.setTiempoEjecucion(t2 - t1);
@@ -65,9 +95,9 @@ public class AdministracionMemoria
 		int longitud, tiempo, retraso;
 		
 		// Procesos de tamano y tiempo aleatorio
-		try (PrintWriter pw1 = new PrintWriter("procesos1.txt");
-			 PrintWriter pw2 = new PrintWriter("procesos2.txt");
-			 PrintWriter pw3 = new PrintWriter("procesos3.txt"))
+		try (PrintWriter pw1 = new PrintWriter("aleatorio.txt");
+			 PrintWriter pw2 = new PrintWriter("ascendente.txt");
+			 PrintWriter pw3 = new PrintWriter("descendente.txt"))
 		{
 			// Procesos de tamano y tiempo aleatorios
 			for (int i = 0; i < 1000; i++)
@@ -273,11 +303,13 @@ class Estadisticas
 {
 	private int procesosRechazados;
 	private long tiempoEjecucion;
+	private final String nombreArchivo;
 	
-	public Estadisticas()
+	public Estadisticas(String nombre)
 	{
 		this.procesosRechazados = 0;
 		this.tiempoEjecucion = 0;
+		this.nombreArchivo = nombre;
 	}
 	
 	public void incrementarProcesosRechazados()
@@ -293,7 +325,8 @@ class Estadisticas
 	@Override
 	public String toString()
 	{
-		return "Total de procesos rechazados: " + procesosRechazados + "\n" +
+		return "Archivo ejecutado: " + nombreArchivo + "\n" +
+				"Total de procesos rechazados: " + procesosRechazados + "\n" +
 				"Tiempo de ejecución total: " + ((double) tiempoEjecucion / 1000) + " segundos\n";
 	}
 }

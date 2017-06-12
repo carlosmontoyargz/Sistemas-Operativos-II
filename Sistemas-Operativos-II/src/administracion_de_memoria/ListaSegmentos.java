@@ -13,7 +13,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	private Segmento actual;
 	
 	/**
-	 * Construye una lista de segmentos para con la memoria especificada.
+	 * Construye una lista de segmentos con la memoria especificada.
 	 * 
 	 * @param memoriaTotal  La memoria disponible
 	 */

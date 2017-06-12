@@ -1,8 +1,6 @@
 package administracion_de_memoria;
 
 /**
- * Clase que permite administrar una lista de segmentos de memoria mediante el
- * algoritmo de siguiente ajuste.
  * 
  * @author carlosmontoya
  */
