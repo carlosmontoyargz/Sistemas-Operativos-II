@@ -32,7 +32,8 @@ public class ListasSegmentos
 		
 		// Busca la lista de la que se extraera el hueco necesario
 		int i = 0;
-		while (i < listaHuecos.length && longitud > listaHuecos[i].getLongitudMayor())
+		while (i < listaHuecos.length &&
+				longitud > listaHuecos[i].getLongitudMayor())
 			i++;
 		if (i == listaHuecos.length) return false;
 		
@@ -40,13 +41,14 @@ public class ListasSegmentos
 		
 		if (longitud < hueco.getLongitud())
 		{
-			Segmento huecoGenerado = new Segmento(hueco.getDireccion() + longitud,
+			Segmento huecoGenerado = new Segmento(
+					hueco.getDireccion() + longitud,
 					hueco.getLongitud() - longitud);
 			fusionarHuecoDerecho(huecoGenerado);
 			
 			i = listaHuecos.length - 1;
-			while (i >= 0 &&
-					listaHuecos[i].geLongitudMinimaAceptada() > huecoGenerado.getLongitud())
+			while (i >= 0 && listaHuecos[i].geLongitudMinimaAceptada() >
+					huecoGenerado.getLongitud())
 				i--;
 			listaHuecos[i].agregar(huecoGenerado);
 		}
@@ -188,7 +190,8 @@ class ListaAjusteRapido
 	{
 		Segmento s = this.primero;
 		
-		while (s != null && !((s.getDireccion() + s.getLongitud() - 1) == dirFinal))
+		while (s != null &&
+				!((s.getDireccion() + s.getLongitud() - 1) == dirFinal))
 			s = s.getSiguiente();
 		
 		eliminar(s);
