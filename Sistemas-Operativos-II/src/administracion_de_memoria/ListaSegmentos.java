@@ -334,7 +334,7 @@ public class ListaSegmentos
 			lista += nodo + ", ";
 			nodo = nodo.getSiguiente();
 		}
-		lista += nodo + "]";
+		lista += nodo + "] : " + actual;
 		
 		return lista;
 	}
