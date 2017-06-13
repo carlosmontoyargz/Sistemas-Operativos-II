@@ -6,7 +6,7 @@ package administracion_de_memoria;
  *
  * @author carlosmontoya
  */
-public abstract class ListaSegmentos implements AdministradorMemoria
+public class ListaSegmentos
 {
 	private Segmento primero;
 	private Segmento ultimo;
@@ -17,7 +17,7 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @param memoriaTotal  La memoria disponible
 	 */
-	protected ListaSegmentos(int memoriaTotal)
+	public ListaSegmentos(int memoriaTotal)
 	{
 		//Crea el hueco inicial
 		Segmento nodoInicial = new Segmento(0, memoriaTotal, null, null);
@@ -26,29 +26,26 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		this.ultimo = nodoInicial;
 		this.actual = nodoInicial;
 	}
-		
+	
 	/**
-	 * Agrega un nuevo proceso a la lista de segmentos. La operacion se cancela
-	 * si se intenta agregar un hueco.
+	 * Agrega un nuevo proceso a la lista de segmentos mediante el algoritmo de
+	 * primer ajuste.
 	 * 
 	 * @param nombre  El nombre del proceso por agregar
 	 * @param longitud  El tamano en bytes del proceso por agregar
 	 * 
-	 * @return  true si el proceso fue agregado correctamente, o false en caso contrario
+	 * @return  true si el proceso fue agregado correctamente, o false en caso
+	 * contrario
 	 */
-	@Override
-	public synchronized boolean agregar(String nombre, int longitud)
+	public boolean primerAjuste(String nombre, int longitud)
 	{
-		// Si se intenta agregar un hueco o un proceso con longitud no positiva
-		// la operacion se cancela
 		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
 		
 		// Se busca el hueco adecuado para el proceso
-		Segmento hueco = buscarHueco(longitud);
+		Segmento hueco = buscarHueco(longitud, 0);
 		
-		// Si no se encuentra un hueco adecuado o el segmento no es un hueco la operacion se cancela
+		// Si no se encuentra un hueco adecuado la operacion se cancela
 		if (hueco == null) return false;
-		if (!hueco.isHueco()) return false;
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
@@ -61,25 +58,131 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	}
 	
 	/**
-	 * Busca el hueco en el que se almacenara el proceso nuevo. Las subclases deben
-	 * sobreescribir este metodo para cambiar el algoritmo de busqueda del hueco.
-	 * Si el metodo no se sobreescribe se utiliza el algoritmo de primer ajuste.
-	 * Si no se encuentra un hueco adecuado, el proceso debe retornar null.
-	 * El segmento retornado debe ser un hueco.
+	 * Agrega un nuevo proceso a la lista de segmentos mediante el algoritmo de
+	 * siguiente ajuste.
 	 * 
-	 * @param longitud  El tamano en bytes del nuevo proceso
+	 * @param nombre  El nombre del proceso por agregar
+	 * @param longitud  El tamano en bytes del proceso por agregar
 	 * 
-	 * @return  El hueco adecuado en el que guardar el proceso nuevo
+	 * @return  true si el proceso fue agregado correctamente, o false en caso
+	 * contrario
 	 */
-	protected synchronized Segmento buscarHueco(int longitud)
+	public boolean siguienteAjuste(String nombre, int longitud)
 	{
-		return buscarHueco(longitud, 0);
+		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
+		
+		// Se busca el hueco adecuado para el proceso
+		Segmento hueco = buscarHueco(longitud, 2);
+		if (hueco == null) hueco = buscarHueco(longitud, 1);
+		
+		// Si no se encuentra un hueco adecuado la operacion se cancela
+		if (hueco == null) return false;
+		
+		//Se guarda el proceso en el hueco encontrado
+		guardarProceso(hueco, nombre, longitud);
+		
+		// Actualiza la referencia actual
+		actual = (hueco.getSiguiente() != null) ? hueco.getSiguiente()
+				:this.primero;
+		
+		return true;
 	}
 	
 	/**
-	 * Busca el primer hueco en la lista con la longitud en bytes necesaria para el
-	 * proceso. Retorna null si no se ha encontrado un hueco adecuado en el rango
-	 * especificado.
+	 * Agrega un nuevo proceso a la lista de segmentos mediante el algoritmo de
+	 * mejor ajuste.
+	 * 
+	 * @param nombre  El nombre del proceso por agregar
+	 * @param longitud  El tamano en bytes del proceso por agregar
+	 * 
+	 * @return  true si el proceso fue agregado correctamente, o false en caso
+	 * contrario
+	 */
+	public boolean mejorAjuste(String nombre, int longitud)
+	{
+		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
+		
+		// Busca el primer hueco compatible
+		Segmento hueco = buscarHueco(longitud, 0);
+		if (hueco != null)
+		{
+			int longitudMenor = hueco.getLongitud();
+			Segmento s = hueco.getSiguiente();
+			while (s != null)
+			{
+				if (s.isHueco() && s.getLongitud() >= longitud && s.getLongitud() < longitudMenor)
+				{
+					hueco = s;
+					longitudMenor = hueco.getLongitud();
+				}
+				else
+					s = s.getSiguiente();
+			}
+		}
+		
+		// Si no se encuentra un hueco adecuado la operacion se cancela
+		if (hueco == null) return false;
+		
+		//Se guarda el proceso en el hueco encontrado
+		guardarProceso(hueco, nombre, longitud);
+		
+		// Actualiza la referencia actual
+		actual = (hueco.getSiguiente() != null) ? hueco.getSiguiente()
+				:this.primero;
+		
+		return true;
+	}
+	
+	/**
+	 * Agrega un nuevo proceso a la lista de segmentos mediante el algoritmo de
+	 * peor ajuste.
+	 * 
+	 * @param nombre  El nombre del proceso por agregar
+	 * @param longitud  El tamano en bytes del proceso por agregar
+	 * 
+	 * @return  true si el proceso fue agregado correctamente, o false en caso
+	 * contrario
+	 */
+	public boolean peorAjuste(String nombre, int longitud)
+	{
+		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
+		
+		// Busca el primer hueco compatible
+		// Busca el primer hueco compatible
+		Segmento hueco = buscarHueco(longitud, 0);
+		if (hueco != null)
+		{
+			int longitudMayor = hueco.getLongitud();
+			Segmento s = hueco.getSiguiente();
+			while (s != null)
+			{
+				if (s.isHueco() && s.getLongitud() > longitudMayor)
+				{
+					hueco = s;
+					longitudMayor = hueco.getLongitud();
+				}
+				else
+					s = s.getSiguiente();
+			}
+		}
+		
+		// Si no se encuentra un hueco adecuado la operacion se cancela
+		if (hueco == null) return false;
+		
+		//Se guarda el proceso en el hueco encontrado
+		guardarProceso(hueco, nombre, longitud);
+		
+		// Actualiza la referencia actual
+		actual = (hueco.getSiguiente() != null) ? hueco.getSiguiente()
+				:this.primero;
+		
+		return true;
+	}
+	
+	/**
+	 * Busca el primer hueco en la lista con la longitud en bytes necesaria para
+	 * el proceso. Retorna null si no se ha encontrado un hueco adecuado en el
+	 * rango especificado.
 	 * 
 	 * @param longitud  La longitud en bytes del proceso
 	 * @param tipo  El  tipo de busqueda dentro de la lista:
@@ -87,9 +190,10 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 *					1 para buscar desde el inicio hasta el actual,
 	 *					2 para buscar desde el actual hasta el final
 	 * 
-	 * @return  El hueco encontrado, o null si no se ha encontrado un hueco adecuado
+	 * @return  El hueco encontrado, o null si no se ha encontrado un hueco
+	 * adecuado
 	 */
-	protected synchronized Segmento buscarHueco(int longitud, int tipo)
+	private synchronized Segmento buscarHueco(int longitud, int tipo)
 	{
 		Segmento inicio = this.primero, final1 = null;
 		
@@ -113,7 +217,8 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		return segmento;
 	}
 	
-	private synchronized void guardarProceso(Segmento hueco, String nombre, int longitud)
+	private synchronized void guardarProceso(Segmento hueco, String nombre,
+			int longitud)
 	{
 		hueco.setNombre(nombre);
 		
@@ -144,7 +249,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * @return  true si el proceso fue eliminado correctamente, o false si no se
 	 * ha eliminado nada en la lista
 	 */
-	@Override
 	public synchronized boolean eliminar(String nombre)
 	{
 		return liberarMemoria(buscarProceso(nombre));
@@ -155,7 +259,8 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 	 * 
 	 * @param nombre  El nombre del proceso a buscar
 	 * 
-	 * @return  La referencia al proceso buscado, o null en caso de no ser encontrado
+	 * @return  La referencia al proceso buscado, o null en caso de no ser
+	 * encontrado
 	 */
 	private synchronized Segmento buscarProceso(String nombre)
 	{
@@ -216,21 +321,6 @@ public abstract class ListaSegmentos implements AdministradorMemoria
 		}
 		
 		return true;
-	}
-	
-	protected synchronized Segmento getPrimero()
-	{
-		return this.primero;
-	}
-	
-	protected synchronized Segmento getUltimo()
-	{
-		return this.ultimo;
-	}
-	
-	protected synchronized Segmento getActual()
-	{
-		return this.actual;
 	}
 	
 	@Override
