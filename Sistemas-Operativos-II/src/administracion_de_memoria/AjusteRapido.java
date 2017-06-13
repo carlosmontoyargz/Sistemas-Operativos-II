@@ -4,7 +4,7 @@ package administracion_de_memoria;
  *
  * @author carlosmontoya
  */
-public class AjusteRapido implements AdministradorMemoria
+public class AjusteRapido
 {
 	private final ListaAjusteRapido[] listaHuecos;
 	private final ListaAjusteRapido listaProcesos;
@@ -26,8 +26,7 @@ public class AjusteRapido implements AdministradorMemoria
 		this.listaProcesos = new ListaAjusteRapido(0);
 	}
 	
-	@Override
-	public synchronized boolean agregar(String nombre, int longitud)
+	public synchronized boolean ajusteRapido(String nombre, int longitud)
 	{
 		if (Segmento.isNombreHueco(nombre) || longitud < 1) return false;
 		
@@ -58,7 +57,6 @@ public class AjusteRapido implements AdministradorMemoria
 		return listaProcesos.agregar(hueco);
 	}
 	
-	@Override
 	public synchronized boolean eliminar(String nombre)
 	{
 		if (nombre.equals(Segmento.nombreHueco)) return false;
