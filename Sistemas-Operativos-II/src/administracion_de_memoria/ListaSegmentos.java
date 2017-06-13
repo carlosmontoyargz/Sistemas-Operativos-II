@@ -110,7 +110,8 @@ public class ListaSegmentos
 			Segmento s = hueco.getSiguiente();
 			while (s != null)
 			{
-				if (s.isHueco() && s.getLongitud() >= longitud && s.getLongitud() < longitudMenor)
+				if (s.isHueco() && s.getLongitud() >= longitud &&
+						s.getLongitud() < longitudMenor)
 				{
 					hueco = s;
 					longitudMenor = hueco.getLongitud();
@@ -276,12 +277,13 @@ public class ListaSegmentos
 	}
 	
 	/**
-	 * Convierte en hueco el proceso especificado y fusiona los huecos adyacentes.
+	 * Convierte en hueco el proceso especificado y fusiona los huecos
+	 * adyacentes.
 	 * 
 	 * @param proceso  El proceso a ser convertido en hueco
 	 * 
-	 * @return  true si el proceso fue convertido en hueco, false si el argumento
-	 * es null
+	 * @return  true si el proceso fue convertido en hueco, false si el
+	 * argumento es null
 	 */
 	private synchronized boolean liberarMemoria(Segmento proceso)
 	{
