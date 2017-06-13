@@ -6,9 +6,9 @@ package paginacion;
  */
 public class MMU
 {
-	private final int bytesPagina;
-    private final int bytesDesplazamiento;
-	private final int bytesMarco;
+	private final int bitsPagina;
+    private final int bitsDesplazamiento;
+	private final int bitsMarco;
 	
 	private final int memoriaVirtual;
 	private final int memoriaFisica;
@@ -19,9 +19,9 @@ public class MMU
 	
 	public MMU(int bytesPagina, int bytesMarco, int bytesDesplazamiento)
 	{
-		this.bytesDesplazamiento = bytesDesplazamiento;
-		this.bytesPagina = bytesPagina;
-		this.bytesMarco = bytesMarco;
+		this.bitsDesplazamiento = bytesDesplazamiento;
+		this.bitsPagina = bytesPagina;
+		this.bitsMarco = bytesMarco;
 		
 		this.tamanoPagina = (int) Math.pow(2, bytesDesplazamiento);
 		this.numPaginas = (int) Math.pow(2, bytesPagina);
@@ -34,7 +34,7 @@ public class MMU
 	{
 		int temp = decimal;
 		String resultado = "";
-		for (int i = 0; i < bytesMarco; i++)
+		for (int i = 0; i < bitsMarco; i++)
 		{
 			if (temp % 2 == 0) resultado = "0" + resultado;
 			else resultado = "1" + resultado;
@@ -47,7 +47,7 @@ public class MMU
 	public String virtualAFisica(String dirVirtual, int numMarco)
 	{
 		String marcoB = decimalBinario(numMarco);
-		String desplazamiento = dirVirtual.substring(bytesPagina, bytesPagina + bytesDesplazamiento);
+		String desplazamiento = dirVirtual.substring(bitsPagina, bitsPagina + bitsDesplazamiento);
 		return marcoB + desplazamiento;
 	}
 
