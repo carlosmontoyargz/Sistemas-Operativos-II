@@ -13,12 +13,12 @@ public class Paginacion
 	{
 		Scanner in = new Scanner(System.in);
 		
-		System.out.println("Ingresar el numero de bytes para la pagina, marco y desplazamiento");
-		int bytesPag = in.nextInt();
-		int bytesMarco = in.nextInt();
-		int bytesDesp = in.nextInt();
+		System.out.println("Ingresar el numero de bits para la pagina, marco y desplazamiento");
+		int bitsPag = in.nextInt();
+		int bitsMarco = in.nextInt();
+		int bitsDesp = in.nextInt();
 		
-		MMU mmu = new MMU(bytesPag, bytesMarco, bytesDesp);
+		MMU mmu = new MMU(bitsPag, bitsMarco, bitsDesp);
 		System.out.println("\n" + mmu);
 		
 		while (true)
