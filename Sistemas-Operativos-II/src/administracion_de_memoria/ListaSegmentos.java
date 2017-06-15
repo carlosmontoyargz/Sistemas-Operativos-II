@@ -12,6 +12,9 @@ public class ListaSegmentos
 	private Segmento ultimo;
 	private Segmento actual;
 	
+	private int procesosRechazados;
+	private int huecosPequeñosGenerados;
+	
 	/**
 	 * Construye una lista de segmentos con la memoria especificada.
 	 * 
@@ -25,6 +28,9 @@ public class ListaSegmentos
 		this.primero = nodoInicial;
 		this.ultimo = nodoInicial;
 		this.actual = nodoInicial;
+		
+		this.procesosRechazados = 0;
+		this.huecosPequeñosGenerados = 0;
 	}
 	
 	/**
@@ -45,7 +51,11 @@ public class ListaSegmentos
 		Segmento hueco = buscarHueco(longitud, 0);
 		
 		// Si no se encuentra un hueco adecuado la operacion se cancela
-		if (hueco == null) return false;
+		if (hueco == null)
+		{
+			this.procesosRechazados++;
+			return false;
+		}
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
@@ -76,7 +86,11 @@ public class ListaSegmentos
 		if (hueco == null) hueco = buscarHueco(longitud, 1);
 		
 		// Si no se encuentra un hueco adecuado la operacion se cancela
-		if (hueco == null) return false;
+		if (hueco == null)
+		{
+			this.procesosRechazados++;
+			return false;
+		}
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
@@ -122,7 +136,11 @@ public class ListaSegmentos
 		}
 		
 		// Si no se encuentra un hueco adecuado la operacion se cancela
-		if (hueco == null) return false;
+		if (hueco == null)
+		{
+			this.procesosRechazados++;
+			return false;
+		}
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
@@ -168,7 +186,11 @@ public class ListaSegmentos
 		}
 		
 		// Si no se encuentra un hueco adecuado la operacion se cancela
-		if (hueco == null) return false;
+		if (hueco == null)
+		{
+			this.procesosRechazados++;
+			return false;
+		}
 		
 		//Se guarda el proceso en el hueco encontrado
 		guardarProceso(hueco, nombre, longitud);
@@ -230,6 +252,7 @@ public class ListaSegmentos
 					hueco.getDireccion() + longitud,
 					hueco.getLongitud() - longitud,
 					hueco, hueco.getSiguiente());
+			if (nuevoHueco.getLongitud() < 8) this.huecosPequeñosGenerados++;
 			
 			hueco.setLongitud(longitud);
 			hueco.setSiguiente(nuevoHueco);
@@ -323,6 +346,16 @@ public class ListaSegmentos
 		}
 		
 		return true;
+	}
+	
+	public int getProcesosRechazados()
+	{
+		return procesosRechazados;
+	}
+
+	public int getHuecosPequeñosGenerados()
+	{
+		return huecosPequeñosGenerados;
 	}
 	
 	@Override
