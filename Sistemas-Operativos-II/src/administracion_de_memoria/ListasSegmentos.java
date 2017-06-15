@@ -9,6 +9,9 @@ public class ListasSegmentos
 	private final ListaAjusteRapido[] listaHuecos;
 	private final ListaAjusteRapido listaProcesos;
 	
+	private int procesosRechazados;
+	private int huecosPequeñosGenerados;
+	
 	public ListasSegmentos(int memoriaTotal)
 	{
 		this.listaHuecos = new ListaAjusteRapido[7];
@@ -24,6 +27,9 @@ public class ListasSegmentos
 		this.listaHuecos[i].agregar(new Segmento(0, memoriaTotal));
 		
 		this.listaProcesos = new ListaAjusteRapido(0);
+		
+		this.procesosRechazados = 0;
+		this.huecosPequeñosGenerados = 0;
 	}
 	
 	public synchronized boolean ajusteRapido(String nombre, int longitud)
@@ -35,7 +41,11 @@ public class ListasSegmentos
 		while (i < listaHuecos.length &&
 				longitud > listaHuecos[i].getLongitudMayor())
 			i++;
-		if (i == listaHuecos.length) return false;
+		if (i == listaHuecos.length)
+		{
+			this.procesosRechazados++;
+			return false;
+		}
 		
 		Segmento hueco = listaHuecos[i].extraer(longitud);
 		
@@ -45,6 +55,8 @@ public class ListasSegmentos
 					hueco.getDireccion() + longitud,
 					hueco.getLongitud() - longitud);
 			fusionarHuecoDerecho(huecoGenerado);
+			
+			if (huecoGenerado.getLongitud() < 8) this.huecosPequeñosGenerados++;
 			
 			i = listaHuecos.length - 1;
 			while (i >= 0 && listaHuecos[i].geLongitudMinimaAceptada() >
@@ -124,6 +136,16 @@ public class ListasSegmentos
 			i--;
 		
 		return i;
+	}
+	
+	public int getProcesosRechazados()
+	{
+		return procesosRechazados;
+	}
+
+	public int getHuecosPequeñosGenerados()
+	{
+		return huecosPequeñosGenerados;
 	}
     
 	@Override
