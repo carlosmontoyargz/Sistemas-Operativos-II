@@ -17,71 +17,41 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		new AdministracionMemoria().ejecutar();
+		new AdministracionMemoria().ejecutar("aleatorio.txt");
 	}
 	
-	public void ejecutar()
+	public void ejecutar(String file)
 	{
-		try
-		{
-//			guardarArchivosProcesos();
-			System.out.println("Primer ajuste");
-			lanzarHilos("aleatorio.txt", new ListaPrimerAjuste(1024));
-			lanzarHilos("ascendente.txt", new ListaPrimerAjuste(1024));
-			lanzarHilos("descendente.txt", new ListaPrimerAjuste(1024));
-			
-			System.out.println("Siguiente ajuste");
-			lanzarHilos("aleatorio.txt", new ListaSiguienteAjuste(1024));
-			lanzarHilos("ascendente.txt", new ListaSiguienteAjuste(1024));
-			lanzarHilos("descendente.txt", new ListaSiguienteAjuste(1024));
-			
-			System.out.println("Mejor ajuste");
-			lanzarHilos("aleatorio.txt", new ListaMejorAjuste(1024));
-			lanzarHilos("ascendente.txt", new ListaMejorAjuste(1024));
-			lanzarHilos("descendente.txt", new ListaMejorAjuste(1024));
-			
-			System.out.println("Peor ajuste");
-			lanzarHilos("aleatorio.txt", new ListaPeorAjuste(1024));
-			lanzarHilos("ascendente.txt", new ListaPeorAjuste(1024));
-			lanzarHilos("descendente.txt", new ListaPeorAjuste(1024));
-			
-			System.out.println("Ajuste Rapido");
-			lanzarHilos("aleatorio.txt", new AjusteRapido(1024));
-			lanzarHilos("ascendente.txt", new AjusteRapido(1024));
-			lanzarHilos("descendente.txt", new AjusteRapido(1024));
-		}
-		catch (FileNotFoundException e)
-		{
-			System.out.println("error en la creacion o lectura de los datos");
-		}
-		catch (InterruptedException e1)
-		{
-			System.out.println("error en la ejecucion de los hilos");
-		}
-	}
-	
-	public void lanzarHilos(String file, AdministradorMemoria adm)
-			throws FileNotFoundException, InterruptedException
-	{
-		// Lista para llevar registro del tiempo de ejecucion de los procesos
+		ListaSegmentos lista = new ListaSegmentos(1024);
 		LinkedList<Proceso> procesosEjecucion = new LinkedList<>();
-		Estadisticas estadisticas = new Estadisticas(file);
 		
 		long t1 = new Date().getTime();
 		
-		Thread agregador = new Thread(new Agregador(adm, procesosEjecucion, file, estadisticas));
-		Thread eliminador = new Thread(new Eliminador(adm, procesosEjecucion));
-		
-		agregador.start();
-		eliminador.start();
-		
-		agregador.join();
-		eliminador.join();
+		try
+		{
+			Thread agregador = new Thread(
+					new Agregador(lista, procesosEjecucion, file));
+			Thread eliminador = new Thread(
+					new Eliminador(lista, procesosEjecucion));
+
+			agregador.start();
+			eliminador.start();
+
+			agregador.join();
+			eliminador.join();
+		}
+		catch (InterruptedException | FileNotFoundException e)
+		{}
 		
 		long t2 = new Date().getTime();
+		double segundos = (double)(t2 - t1) / 1000;
 		
-		estadisticas.setTiempoEjecucion(t2 - t1);
-		System.out.println(estadisticas);
+		System.out.println("Archivo ejecutado: " + file + "\n" +
+				"Total de procesos rechazados: " +
+				lista.getProcesosRechazados() + "\n" +
+				"Total de huecos pequeños creados: " +
+				lista.getHuecosPequeñosGenerados() + "\n" +
+				"Tiempo de ejecución total: " + segundos + " segundos\n");
 	}
 	
 	/**
@@ -136,18 +106,16 @@ public class AdministracionMemoria
  */
 class Agregador implements Runnable
 {
-	private final AdministradorMemoria adm;
+	private final ListaSegmentos lista;
 	private final LinkedList<Proceso> procesosEjecucion;
-	private final Estadisticas estadisticas;
 	private final Scanner reader;
 	
-	public Agregador(AdministradorMemoria adm,
-			LinkedList<Proceso> procesos, String archivo, Estadisticas est)
-			throws FileNotFoundException
+	public Agregador(ListaSegmentos lista, LinkedList<Proceso> procesos,
+			String archivo)
+		throws FileNotFoundException
 	{
-		this.adm = adm;
+		this.lista = lista;
 		this.procesosEjecucion = procesos;
-		this.estadisticas = est;
 		this.reader = new Scanner(new FileReader(archivo));
 	}
 	
@@ -177,20 +145,17 @@ class Agregador implements Runnable
 			int longitud = reader.nextInt();
 			int tiempo = reader.nextInt();
 
-			if (adm.agregar(nombre, longitud))
+			if (lista.primerAjuste(nombre, longitud))
 			{
 				procesosEjecucion.add(new Proceso(nombre, tiempo));
-//				System.out.println("Agregado proceso: [" + nombre + " " + longitud + " "  + tiempo + "]\n" +
-//						adm + "\n" +
-//						"Tiempos de ejecucion: " + procesosEjecucion + "\n");
+				System.out.println("Agregado proceso: [" + 
+						nombre + " " + longitud + " "  + tiempo + "]\n" +
+						lista + "\n" +
+						"Tiempos de ejecucion: " + procesosEjecucion + "\n");
 			}
 			else
-			{
-//				System.out.println("Rechazado proceso: [" +
-//						nombre + " " + longitud + " "  + tiempo + "]\n");
-				
-				this.estadisticas.incrementarProcesosRechazados();
-			}
+				System.out.println("Rechazado proceso: [" +
+						nombre + " " + longitud + " "  + tiempo + "]\n");
 		}
 	}
 }
@@ -202,14 +167,14 @@ class Agregador implements Runnable
  */
 class Eliminador implements Runnable
 {
-	private final AdministradorMemoria adm;
+	private final ListaSegmentos lista;
 	private final LinkedList<Proceso> procesosEjecucion;
 	
 	private boolean ejecucion;
 	
-	public Eliminador(AdministradorMemoria adm, LinkedList<Proceso> procesos)
+	public Eliminador(ListaSegmentos lista, LinkedList<Proceso> procesos)
 	{
-		this.adm = adm;
+		this.lista = lista;
 		this.procesosEjecucion = procesos;
 		this.ejecucion = true;
 	}
@@ -241,12 +206,12 @@ class Eliminador implements Runnable
 
 				if (p.terminado())
 				{
-					if (adm.eliminar(p.getNombre()))
+					if (lista.eliminar(p.getNombre()))
 					{
 						listaIterator.remove();
 
-//						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n"
-//								+ adm + "\n");
+						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n"
+								+ lista + "\n");
 						
 						if (p.getNombre().equals("P999"))
 							this.ejecucion = false;
@@ -255,7 +220,7 @@ class Eliminador implements Runnable
 				else
 					p.decrementarTiempo();
 			}
-//			System.out.println("Tiempos de ejecucion: " + procesosEjecucion + "\n");
+			System.out.println("Tiempos de ejecucion: " + procesosEjecucion + "\n");
 		}
 	}
 }
@@ -296,37 +261,5 @@ class Proceso
 	public String toString()
 	{
 		return "[" + nombre + " " + tiempo + "]";
-	}
-}
-
-class Estadisticas
-{
-	private int procesosRechazados;
-	private long tiempoEjecucion;
-	private final String nombreArchivo;
-	
-	public Estadisticas(String nombre)
-	{
-		this.procesosRechazados = 0;
-		this.tiempoEjecucion = 0;
-		this.nombreArchivo = nombre;
-	}
-	
-	public void incrementarProcesosRechazados()
-	{
-		this.procesosRechazados ++;
-	}
-
-	public void setTiempoEjecucion(long tiempo)
-	{
-		this.tiempoEjecucion = tiempo;
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "Archivo ejecutado: " + nombreArchivo + "\n" +
-				"Total de procesos rechazados: " + procesosRechazados + "\n" +
-				"Tiempo de ejecución total: " + ((double) tiempoEjecucion / 1000) + " segundos\n";
 	}
 }
