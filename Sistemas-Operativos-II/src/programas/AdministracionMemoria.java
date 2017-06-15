@@ -29,7 +29,7 @@ public class AdministracionMemoria
 	
 	public void ejecutarHilos(String file)
 	{
-		ListaSegmentos lista = new ListaSegmentos(1024);
+		ListasSegmentos lista = new ListasSegmentos(1024);
 		LinkedList<Proceso> procesosEjecucion = new LinkedList<>();
 		
 		long t1 = new Date().getTime();
@@ -113,11 +113,11 @@ public class AdministracionMemoria
  */
 class Agregador implements Runnable
 {
-	private final ListaSegmentos lista;
+	private final ListasSegmentos lista;
 	private final LinkedList<Proceso> procesosEjecucion;
 	private final Scanner reader;
 	
-	public Agregador(ListaSegmentos lista, LinkedList<Proceso> procesos,
+	public Agregador(ListasSegmentos lista, LinkedList<Proceso> procesos,
 			String archivo)
 		throws FileNotFoundException
 	{
@@ -152,17 +152,17 @@ class Agregador implements Runnable
 			int longitud = reader.nextInt();
 			int tiempo = reader.nextInt();
 
-			if (lista.primerAjuste(nombre, longitud))
+			if (lista.ajusteRapido(nombre, longitud))
 			{
 				procesosEjecucion.add(new Proceso(nombre, tiempo));
-				System.out.println("Agregado proceso: [" + 
-						nombre + " " + longitud + " "  + tiempo + "]\n" +
-						lista + "\n" +
-						"Tiempos de ejecucion: " + procesosEjecucion + "\n");
+//				System.out.println("Agregado proceso: [" + 
+//						nombre + " " + longitud + " "  + tiempo + "]\n" +
+//						lista + "\n" +
+//						"Tiempos de ejecucion: " + procesosEjecucion + "\n");
 			}
-			else
-				System.out.println("Rechazado proceso: [" +
-						nombre + " " + longitud + " "  + tiempo + "]\n");
+//			else
+//				System.out.println("Rechazado proceso: [" +
+//						nombre + " " + longitud + " "  + tiempo + "]\n");
 		}
 	}
 }
@@ -174,12 +174,12 @@ class Agregador implements Runnable
  */
 class Eliminador implements Runnable
 {
-	private final ListaSegmentos lista;
+	private final ListasSegmentos lista;
 	private final LinkedList<Proceso> procesosEjecucion;
 	
 	private boolean ejecucion;
 	
-	public Eliminador(ListaSegmentos lista, LinkedList<Proceso> procesos)
+	public Eliminador(ListasSegmentos lista, LinkedList<Proceso> procesos)
 	{
 		this.lista = lista;
 		this.procesosEjecucion = procesos;
@@ -216,10 +216,7 @@ class Eliminador implements Runnable
 					if (lista.eliminar(p.getNombre()))
 					{
 						listaIterator.remove();
-
-						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n"
-								+ lista + "\n");
-						
+//						System.out.println("Eliminado proceso: [" + p.getNombre() + "]\n" + lista + "\n");
 						if (p.getNombre().equals("P999"))
 							this.ejecucion = false;
 					}
@@ -227,7 +224,7 @@ class Eliminador implements Runnable
 				else
 					p.decrementarTiempo();
 			}
-			System.out.println("Tiempos de ejecucion: " + procesosEjecucion + "\n");
+//			System.out.println("Tiempos de ejecucion: " + procesosEjecucion + "\n");
 		}
 	}
 }
