@@ -17,10 +17,17 @@ public class AdministracionMemoria
 {
     public static void main(String[] args)
 	{
-		new AdministracionMemoria().ejecutar("aleatorio.txt");
+		new AdministracionMemoria().ejecutar();
 	}
 	
-	public void ejecutar(String file)
+	public void ejecutar()
+	{
+		ejecutarHilos("aleatorio.txt");
+		ejecutarHilos("ascendente.txt");
+		ejecutarHilos("descendente.txt");
+	}
+	
+	public void ejecutarHilos(String file)
 	{
 		ListaSegmentos lista = new ListaSegmentos(1024);
 		LinkedList<Proceso> procesosEjecucion = new LinkedList<>();
